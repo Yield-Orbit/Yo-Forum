@@ -1,0 +1,3620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yield Orbit 社区论坛</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏 */
+        header {
+            background-color: rgba(15, 23, 42, 0.95);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #334155;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        
+        .logo-img {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 18px;
+        }
+        
+        nav a:hover {
+            color: #3b82f6;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 8px;
+            border: 1px solid #334155;
+            position: relative;
+        }
+        
+        .user-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(to right, #f59e0b, #d97706);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .user-avatar-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .developer-avatar {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+        }
+        
+        .login-btn, .register-btn, .homepage-btn, .admin-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .login-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .login-btn:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+        
+        .register-btn {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .register-btn:hover {
+            background: #2563eb;
+        }
+        
+        .homepage-btn {
+            background: linear-gradient(to right, #8b5cf6, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .homepage-btn:hover {
+            background: linear-gradient(to right, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+        }
+        
+        .admin-btn {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .admin-btn:hover {
+            background: linear-gradient(to right, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        /* 协议模态框 */
+        .agreement-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1002;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .agreement-modal.active {
+            display: flex;
+        }
+        
+        .agreement-content {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            border: 1px solid #334155;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .agreement-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #f8fafc;
+        }
+        
+        .agreement-body {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        .agreement-section {
+            margin-bottom: 25px;
+        }
+        
+        .agreement-section h3 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .agreement-section h4 {
+            color: #cbd5e1;
+            margin: 15px 0 8px;
+            font-size: 1.1rem;
+        }
+        
+        .agreement-section p {
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+        
+        .agreement-section ul {
+            color: #94a3b8;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .agreement-section li {
+            margin-bottom: 8px;
+        }
+        
+        .agreement-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+        
+        /* 开发者面板 */
+        .admin-panel {
+            display: none;
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 16px;
+            border: 1px solid #334155;
+        }
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
+        .admin-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-title i {
+            color: #f59e0b;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-stat-card {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .admin-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f59e0b;
+        }
+        
+        .admin-stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        
+        .admin-tab {
+            padding: 12px 24px;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid #334155;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+        
+        .admin-tab:hover {
+            background: rgba(245, 158, 11, 0.2);
+        }
+        
+        .admin-tab.active {
+            background: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+        
+        .admin-content {
+            display: none;
+        }
+        
+        .admin-content.active {
+            display: block;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .users-table th, .users-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .users-table th {
+            background: rgba(30, 41, 59, 0.9);
+            color: #f59e0b;
+            font-weight: 600;
+        }
+        
+        .users-table tr:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .user-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .status-banned {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        
+        .ban-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .ban-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+        
+        .unban-btn {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .unban-btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+        
+        .delete-btn {
+            background: rgba(107, 114, 128, 0.2);
+            color: #94a3b8;
+        }
+        
+        .delete-btn:hover {
+            background: rgba(107, 114, 128, 0.3);
+        }
+        
+        /* 登录/注册模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #334155;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .modal-close:hover {
+            color: #f8fafc;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #f8fafc;
+        }
+        
+        .modal-subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        
+        /* 协议同意复选框 */
+        .agreement-checkbox {
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .agreement-checkbox input {
+            margin-top: 3px;
+            accent-color: #3b82f6;
+        }
+        
+        .agreement-checkbox label {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .agreement-checkbox a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        
+        .agreement-checkbox a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 主标题区域 */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 50%),
+                        radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.15), transparent 50%);
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        
+        .highlight {
+            color: #60a5fa;
+            font-weight: 700;
+        }
+        
+        /* 官网跳转提示 */
+        .homepage-notice {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 800px;
+            text-align: center;
+            border: 1px solid #334155;
+        }
+        
+        .homepage-notice h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #f8fafc;
+        }
+        
+        .homepage-notice p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        /* 论坛板块选择 */
+        .forum-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        
+        .forum-tab {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid #334155;
+            padding: 15px 30px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .forum-tab:hover {
+            background: rgba(59, 130, 246, 0.2);
+        }
+        
+        .forum-tab.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .game-tab.active {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        
+        /* 论坛内容区域 */
+        .forum-content {
+            display: none;
+        }
+        
+        .forum-content.active {
+            display: block;
+        }
+        
+        .forum-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+        
+        .forum-title {
+            font-size: 1.8rem;
+            color: #f8fafc;
+        }
+        
+        .forum-title i {
+            margin-right: 10px;
+        }
+        
+        .app-forum .forum-title i {
+            color: #3b82f6;
+        }
+        
+        .game-forum .forum-title i {
+            color: #10b981;
+        }
+        
+        /* 登录提示 */
+        .login-prompt {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+        
+        .login-prompt h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #f8fafc;
+        }
+        
+        .login-prompt p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+        
+        /* 发消息表单 */
+        .post-form {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #334155;
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #f8fafc;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #f8fafc;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .form-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #475569;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #64748b;
+        }
+        
+        .game-forum .btn-primary {
+            background: #10b981;
+        }
+        
+        .game-forum .btn-primary:hover {
+            background: #059669;
+        }
+        
+        /* 消息列表 */
+        .messages-container {
+            margin-top: 30px;
+        }
+        
+        .message {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+            transition: transform 0.3s;
+        }
+        
+        .message:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .banned-message {
+            opacity: 0.6;
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .message-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .banned-user-avatar {
+            background: linear-gradient(to right, #ef4444, #dc2626);
+        }
+        
+        .game-message .user-avatar {
+            background: linear-gradient(to right, #10b981, #059669);
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+        
+        .banned-user {
+            color: #ef4444;
+            text-decoration: line-through;
+        }
+        
+        .user-title {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        .developer-title {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+        
+        .message-time {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .message-title {
+            font-size: 1.4rem;
+            color: #f8fafc;
+            margin-bottom: 15px;
+            word-break: break-word;
+        }
+        
+        .message-content {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            word-break: break-word;
+        }
+        
+        .message-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .game-tag {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .message-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #334155;
+        }
+        
+        .message-actions {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .message-action {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .message-action:hover {
+            color: #3b82f6;
+        }
+        
+        .game-message .message-action:hover {
+            color: #10b981;
+        }
+        
+        .reply-form {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px;
+            border: 1px solid #475569;
+            display: none;
+        }
+        
+        .reply-form.active {
+            display: block;
+        }
+        
+        .replies-container {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #334155;
+        }
+        
+        .reply {
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .game-reply {
+            border-left-color: #10b981;
+        }
+        
+        .reply-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .reply-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .reply-user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(to right, #8b5cf6, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .game-reply .reply-user-avatar {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+        }
+        
+        .reply-content {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        
+        .sensitive-word-warning {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .nav-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .forum-tabs {
+                flex-direction: column;
+            }
+            
+            .forum-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .message-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .message-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .message-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .users-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .agreement-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container nav-container">
+            <a href="#home" class="logo">
+                <div class="logo-img">YO</div>
+                <span class="logo-text">Yield Orbit</span>
+            </a>
+            
+            <div class="nav-right">
+                <nav>
+                    <ul>
+                        <li><a href="#home">论坛首页</a></li>
+                        <li><a href="#app-forum">小程序论坛</a></li>
+                        <li><a href="#game-forum">游戏论坛</a></li>
+                        <li><a href="https://yield-orbit.github.io/org/" target="_blank">官网首页</a></li>
+                        <li><a href="#contact">联系我们</a></li>
+                    </ul>
+                </nav>
+                
+                <div id="user-info-display" style="display: none;">
+                    <div class="user-info" id="user-info-container">
+                        <div class="user-avatar-small" id="current-user-avatar">U</div>
+                        <div>
+                            <div id="current-username">用户名</div>
+                            <button id="logout-btn" style="background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 0.9rem;">退出登录</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="auth-buttons">
+                    <button class="login-btn" id="open-login-modal">登录</button>
+                    <button class="register-btn" id="open-register-modal">注册</button>
+                    <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> 访问官网
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 协议模态框 -->
+    <div id="agreement-modal" class="agreement-modal">
+        <div class="agreement-content">
+            <h2 class="agreement-title">Yield Orbit 社区论坛用户协议</h2>
+            <div class="agreement-body">
+                <div class="agreement-section">
+                    <h3>1. 总则</h3>
+                    <p>欢迎使用Yield Orbit社区论坛服务。本论坛是由Yield Orbit公司（以下简称"我们"）运营的在线社区平台，为用户提供关于统计类小程序和养成类游戏的交流空间。</p>
+                    <p>在注册成为本论坛用户之前，请仔细阅读本用户协议（以下简称"协议"）。一旦您完成注册流程或开始使用我们的服务，即表示您已阅读、理解并同意接受本协议的所有条款和条件。</p>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>2. 用户权利与义务</h3>
+                    <h4>2.1 用户权利</h4>
+                    <ul>
+                        <li>在遵守论坛规则的前提下，自由发表观点和意见</li>
+                        <li>参与论坛讨论，与其他用户交流</li>
+                        <li>对论坛内容进行合理的评价和反馈</li>
+                        <li>在个人资料范围内保护个人隐私</li>
+                    </ul>
+                    
+                    <h4>2.2 用户义务</h4>
+                    <ul>
+                        <li>遵守中华人民共和国法律法规</li>
+                        <li>不得发表任何违法、违规内容</li>
+                        <li>尊重其他用户，文明交流</li>
+                        <li>不得进行任何形式的广告、垃圾信息传播</li>
+                        <li>保护个人账户安全，对账户行为负责</li>
+                    </ul>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>3. 内容规范</h3>
+                    <p>用户在本论坛发表的内容必须符合以下要求：</p>
+                    <ul>
+                        <li>不得包含任何违反国家法律法规的内容</li>
+                        <li>不得包含色情、暴力、赌博等不良信息</li>
+                        <li>不得侵犯他人知识产权、隐私权等合法权益</li>
+                        <li>不得进行人身攻击、诽谤、辱骂等不文明行为</li>
+                        <li>不得发布广告、垃圾信息或进行商业推广</li>
+                        <li>不得泄露国家秘密、商业秘密或个人隐私</li>
+                        <li>不得宣扬恐怖主义、极端主义思想</li>
+                    </ul>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>4. 敏感词过滤机制</h3>
+                    <p>为维护良好的社区环境，本论坛实行敏感词过滤机制：</p>
+                    <ul>
+                        <li>系统会自动检测用户发布内容中的敏感词汇</li>
+                        <li>含有敏感词汇的内容将被阻止发布</li>
+                        <li>多次尝试发布敏感内容可能导致账户受限</li>
+                        <li>敏感词库会根据法律法规和社区规则定期更新</li>
+                    </ul>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>5. 账户管理</h3>
+                    <h4>5.1 账户安全</h4>
+                    <p>用户有责任保管好自己的账户信息，不得将账户借给他人使用。如发现账户异常，应立即通知论坛管理员。</p>
+                    
+                    <h4>5.2 账户封禁</h4>
+                    <p>如用户违反本协议规定，我们有权根据违规程度采取以下措施：</p>
+                    <ul>
+                        <li>删除违规内容</li>
+                        <li>暂时或永久封禁账户</li>
+                        <li>限制部分或全部功能使用</li>
+                        <li>情节严重的，将依法追究法律责任</li>
+                    </ul>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>6. 隐私保护</h3>
+                    <p>我们承诺保护用户隐私，但以下情况除外：</p>
+                    <ul>
+                        <li>用户自行公开的信息</li>
+                        <li>根据法律法规要求必须披露的信息</li>
+                        <li>为维护论坛安全必须提供的信息</li>
+                        <li>获得用户明确授权的情况</li>
+                    </ul>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>7. 免责声明</h3>
+                    <p>用户在本论坛发表的言论仅代表个人观点，不代表Yield Orbit公司的立场。我们对用户发布的内容不承担任何法律责任。</p>
+                    <p>因不可抗力、黑客攻击、系统维护等原因导致的服务中断，我们不承担赔偿责任。</p>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>8. 协议修改</h3>
+                    <p>我们有权根据需要修改本协议条款。修改后的协议将在论坛公告后生效。如用户不同意修改后的协议，应停止使用论坛服务。</p>
+                </div>
+                
+                <div class="agreement-section">
+                    <h3>9. 争议解决</h3>
+                    <p>本协议的订立、执行和解释及争议的解决均适用中华人民共和国法律。如发生争议，双方应友好协商解决；协商不成的，任何一方均可向有管辖权的人民法院提起诉讼。</p>
+                </div>
+                
+                <div class="agreement-section">
+                    <p style="color: #60a5fa; font-weight: 600;">最后更新日期：2023年10月</p>
+                </div>
+            </div>
+            <div class="agreement-actions">
+                <button class="btn btn-secondary" id="decline-agreement">不同意</button>
+                <button class="btn btn-primary" id="accept-agreement">同意并继续</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录模态框 -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-login-modal">&times;</button>
+            <h2 class="modal-title">登录账号</h2>
+            <p class="modal-subtitle">登录以参与论坛讨论</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-username">用户名</label>
+                    <input type="text" id="login-username" class="form-input" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">密码</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="请输入密码" required>
+                </div>
+                
+                <div class="agreement-checkbox">
+                    <input type="checkbox" id="login-agreement" required>
+                    <label for="login-agreement">
+                        我已阅读并同意 <a href="javascript:void(0)" id="show-agreement-login">《Yield Orbit社区论坛用户协议》</a>
+                    </label>
+                </div>
+                
+                <div id="login-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 注册模态框 -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-register-modal">&times;</button>
+            <h2 class="modal-title">注册账号</h2>
+            <p class="modal-subtitle">创建账号以参与论坛讨论</p>
+            
+            <form id="register-form">
+                <div class="form-group">
+                    <label class="form-label" for="register-username">用户名</label>
+                    <input type="text" id="register-username" class="form-input" placeholder="请输入用户名（3-20个字符）" required>
+                    <small style="color: #94a3b8; font-size: 0.9rem;">用户名必须唯一，且不能包含特殊字符</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="register-password">密码</label>
+                    <input type="password" id="register-password" class="form-input" placeholder="请输入密码（至少6位）" required>
+                    <small style="color: #94a3b8; font-size: 0.9rem;">密码至少6位，建议包含字母和数字</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="register-password-confirm">确认密码</label>
+                    <input type="password" id="register-password-confirm" class="form-input" placeholder="请再次输入密码" required>
+                </div>
+                
+                <div class="agreement-checkbox">
+                    <input type="checkbox" id="register-agreement" required>
+                    <label for="register-agreement">
+                        我已阅读并同意 <a href="javascript:void(0)" id="show-agreement-register">《Yield Orbit社区论坛用户协议》</a>
+                    </label>
+                </div>
+                
+                <div id="register-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">注册</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 主标题区域 -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Yield Orbit <span class="highlight">社区论坛</span></h1>
+            <p>欢迎来到我们的社区！在这里您可以与其他用户交流，发表您的想法、问题和建议。</p>
+            <div id="user-welcome" style="display: none; margin-top: 20px;">
+                <p style="font-size: 1.1rem; color: #60a5fa;">欢迎回来，<span id="welcome-username">用户</span>！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 官网跳转提示 -->
+    <section id="homepage-notice-section">
+        <div class="container">
+            <div class="homepage-notice">
+                <h3><i class="fas fa-external-link-alt" style="color: #8b5cf6; margin-right: 10px;"></i> 访问Yield Orbit官网</h3>
+                <p>了解更多关于Yield Orbit的产品信息，包括统计类小程序和养成类游戏的详细介绍、功能说明和最新动态。</p>
+                <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')" style="margin-top: 10px;">
+                    <i class="fas fa-external-link-alt"></i> 点击访问官网
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 开发者面板 -->
+    <section id="admin-panel" class="admin-panel">
+        <div class="container">
+            <h2 class="admin-title"><i class="fas fa-crown"></i> 开发者管理面板</h2>
+            
+            <div class="admin-stats">
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="total-users">0</div>
+                    <div class="admin-stat-label">总用户数</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="active-users">0</div>
+                    <div class="admin-stat-label">活跃用户</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="banned-users">0</div>
+                    <div class="admin-stat-label">封禁用户</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="total-messages">0</div>
+                    <div class="admin-stat-label">总消息数</div>
+                </div>
+            </div>
+            
+            <div class="admin-tabs">
+                <div class="admin-tab active" data-tab="users-management">用户管理</div>
+                <div class="admin-tab" data-tab="banned-users">封禁用户</div>
+                <div class="admin-tab" data-tab="forum-stats">论坛统计</div>
+            </div>
+            
+            <!-- 用户管理 -->
+            <div id="users-management" class="admin-content active">
+                <h3 style="margin-bottom: 20px; color: #f8fafc;">用户列表</h3>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>注册时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- 用户数据将通过JavaScript动态添加 -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 封禁用户 -->
+            <div id="banned-users" class="admin-content">
+                <h3 style="margin-bottom: 20px; color: #f8fafc;">已封禁用户</h3>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>封禁时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="banned-table-body">
+                        <!-- 封禁用户数据将通过JavaScript动态添加 -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 论坛统计 -->
+            <div id="forum-stats" class="admin-content">
+                <h3 style="margin-bottom: 20px; color: #f8fafc;">论坛统计</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div style="background: rgba(15, 23, 42, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="app-messages-count">0</div>
+                        <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">小程序论坛消息数</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #10b981;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="game-messages-count">0</div>
+                        <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">游戏论坛消息数</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #8b5cf6;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;" id="total-replies">0</div>
+                        <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">总回复数</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.8); padding: 20px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="total-likes">0</div>
+                        <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 5px;">总点赞数</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 论坛板块选择 -->
+    <section id="forum-section">
+        <div class="container">
+            <div class="forum-tabs">
+                <div class="forum-tab active" data-forum="app-forum">
+                    <i class="fas fa-chart-line"></i> 小程序论坛
+                </div>
+                <div class="forum-tab" data-forum="game-forum">
+                    <i class="fas fa-gamepad"></i> 游戏论坛
+                </div>
+            </div>
+
+            <!-- 小程序论坛 -->
+            <div id="app-forum" class="forum-content app-forum active">
+                <div class="forum-header">
+                    <h2 class="forum-title"><i class="fas fa-chart-line"></i> 小程序技术论坛</h2>
+                    <div class="forum-stats">
+                        <span id="app-message-count">3 条消息</span>
+                    </div>
+                </div>
+
+                <!-- 登录提示 -->
+                <div id="app-login-prompt" class="login-prompt" style="display: none;">
+                    <h3>请先登录</h3>
+                    <p>登录后即可发表消息、回复和参与讨论</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                        <button class="login-btn" id="app-open-login-modal">登录</button>
+                        <button class="register-btn" id="app-open-register-modal">注册</button>
+                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> 访问官网
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 发消息表单 -->
+                <div id="app-post-form" class="post-form" style="display: none;">
+                    <h3 class="form-title">发表新消息</h3>
+                    <form id="app-message-form">
+                        <div class="form-group">
+                            <label class="form-label" for="app-title">消息标题</label>
+                            <input type="text" id="app-title" class="form-input" placeholder="请输入消息标题" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="app-content">消息内容</label>
+                            <textarea id="app-content" class="form-textarea" placeholder="请输入您要分享的内容..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">标签（可选）</label>
+                            <div class="message-tags" id="app-tags-container">
+                                <span class="tag" data-tag="技术问题">技术问题</span>
+                                <span class="tag" data-tag="使用技巧">使用技巧</span>
+                                <span class="tag" data-tag="功能建议">功能建议</span>
+                                <span class="tag" data-tag="bug反馈">bug反馈</span>
+                            </div>
+                            <input type="hidden" id="app-selected-tags">
+                        </div>
+                        <div id="app-form-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">清空</button>
+                            <button type="submit" class="btn btn-primary">发布消息</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 消息列表 -->
+                <div class="messages-container" id="app-messages-list">
+                    <!-- 消息将通过JavaScript动态添加 -->
+                </div>
+            </div>
+
+            <!-- 游戏论坛 -->
+            <div id="game-forum" class="forum-content game-forum">
+                <div class="forum-header">
+                    <h2 class="forum-title"><i class="fas fa-gamepad"></i> 游戏玩家社区</h2>
+                    <div class="forum-stats">
+                        <span id="game-message-count">3 条消息</span>
+                    </div>
+                </div>
+
+                <!-- 登录提示 -->
+                <div id="game-login-prompt" class="login-prompt" style="display: none;">
+                    <h3>请先登录</h3>
+                    <p>登录后即可发表消息、回复和参与讨论</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                        <button class="login-btn" id="game-open-login-modal">登录</button>
+                        <button class="register-btn" id="game-open-register-modal">注册</button>
+                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> 访问官网
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 发消息表单 -->
+                <div id="game-post-form" class="post-form" style="display: none;">
+                    <h3 class="form-title">发表新消息</h3>
+                    <form id="game-message-form">
+                        <div class="form-group">
+                            <label class="form-label" for="game-title">消息标题</label>
+                            <input type="text" id="game-title" class="form-input" placeholder="请输入消息标题" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="game-content">消息内容</label>
+                            <textarea id="game-content" class="form-textarea" placeholder="请输入您要分享的内容..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">标签（可选）</label>
+                            <div class="message-tags" id="game-tags-container">
+                                <span class="tag game-tag" data-tag="游戏攻略">游戏攻略</span>
+                                <span class="tag game-tag" data-tag="组队招募">组队招募</span>
+                                <span class="tag game-tag" data-tag="问题求助">问题求助</span>
+                                <span class="tag game-tag" data-tag="经验分享">经验分享</span>
+                            </div>
+                            <input type="hidden" id="game-selected-tags">
+                        </div>
+                        <div id="game-form-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">清空</button>
+                            <button type="submit" class="btn btn-primary">发布消息</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 消息列表 -->
+                <div class="messages-container" id="game-messages-list">
+                    <!-- 消息将通过JavaScript动态添加 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="contact" style="background-color: rgba(15, 23, 42, 0.98); padding: 60px 0 30px; margin-top: 60px; border-top: 1px solid #334155;">
+        <div class="container">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 40px;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">关于论坛</h3>
+                    <p style="color: #94a3b8;">Yield Orbit社区论坛是用户交流的平台，在这里可以讨论统计小程序使用技巧和游戏攻略。</p>
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">快速链接</h3>
+                    <ul style="list-style: none; color: #94a3b8;">
+                        <li style="margin-bottom: 10px;"><a href="#home" style="color: #94a3b8; text-decoration: none;">论坛首页</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#app-forum" style="color: #94a3b8; text-decoration: none;">小程序论坛</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#game-forum" style="color: #94a3b8; text-decoration: none;">游戏论坛</a></li>
+                        <li style="margin-bottom: 10px;"><a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #94a3b8; text-decoration: none;">官网首页</a></li>
+                    </ul>
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">用户协议</h3>
+                    <p style="color: #94a3b8; margin-bottom: 20px;">使用本论坛前请阅读并同意用户协议：</p>
+                    <button class="homepage-btn" id="show-agreement-footer" style="background: linear-gradient(to right, #3b82f6, #2563eb);">
+                        <i class="fas fa-file-contract"></i> 查看用户协议
+                    </button>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 30px; border-top: 1px solid #334155; color: #94a3b8;">
+                <p>&copy; 2023 Yield Orbit. 保留所有权利。</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">社区论坛版本 1.0 | <a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #60a5fa; text-decoration: none;">前往官网</a> | <a href="javascript:void(0)" id="show-agreement-footer2" style="color: #60a5fa; text-decoration: none;">用户协议</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 敏感词列表（示例）
+        const sensitiveWords = [
+            '敏感词1', '敏感词2', '不良词汇', '违规内容',
+            '暴力', '色情', '赌博', '毒品', '反动'
+        ];
+        
+        // 开发者用户名（仅yao拥有特权）
+        const DEVELOPER_USERNAME = 'yao';
+        
+        // 用户数据存储
+        let users = JSON.parse(localStorage.getItem('yield-orbit-users')) || [
+            {
+                username: 'yao',
+                password: 'yao123',
+                avatarLetter: 'Y',
+                joinDate: '2023-01-01',
+                isDeveloper: true,
+                agreedToTerms: true
+            },
+            {
+                username: 'user1',
+                password: 'user123',
+                avatarLetter: 'U',
+                joinDate: '2023-10-01',
+                isDeveloper: false,
+                agreedToTerms: true
+            }
+        ];
+        
+        // 当前登录用户
+        let currentUser = JSON.parse(localStorage.getItem('yield-orbit-current-user')) || null;
+        
+        // 初始示例数据
+        let forums = {
+            'app': {
+                messages: [
+                    {
+                        id: 1,
+                        username: '数据分析师',
+                        title: '如何导出统计报表？',
+                        content: '我在使用统计小程序时遇到了导出问题，总是提示格式错误。有谁知道如何正确导出Excel格式的报表吗？',
+                        tags: ['技术问题', 'bug反馈'],
+                        timestamp: '2023-10-15 14:30',
+                        likes: 8,
+                        replies: [
+                            {username: '技术支持', content: '请检查您的数据格式，确保没有特殊字符。', timestamp: '2023-10-15 15:00'},
+                            {username: '老用户', content: '可以尝试先导出为CSV格式，再转换为Excel。', timestamp: '2023-10-15 16:20'}
+                        ]
+                    },
+                    {
+                        id: 2,
+                        username: '产品经理',
+                        title: '数据可视化功能建议',
+                        content: '建议增加更多图表类型，特别是动态图表和3D图表，这样数据分析会更加直观。',
+                        tags: ['功能建议'],
+                        timestamp: '2023-10-14 09:15',
+                        likes: 15,
+                        replies: []
+                    },
+                    {
+                        id: 3,
+                        username: '新手用户',
+                        title: '入门教程推荐',
+                        content: '刚接触这个统计小程序，有没有推荐的入门教程或学习资料？谢谢大家！',
+                        tags: ['使用技巧'],
+                        timestamp: '2023-10-13 11:45',
+                        likes: 5,
+                        replies: [
+                            {username: '资深用户', content: '官方文档就是最好的入门材料，建议从基础功能开始学习。', timestamp: '2023-10-13 14:30'}
+                        ]
+                    }
+                ]
+            },
+            'game': {
+                messages: [
+                    {
+                        id: 1,
+                        username: '游戏达人',
+                        title: '快速升级攻略分享',
+                        content: '发现一个快速升级的方法：完成主线任务后，反复刷经验副本，配合双倍经验卡，一天就能满级！',
+                        tags: ['游戏攻略', '经验分享'],
+                        timestamp: '2023-10-15 16:45',
+                        likes: 23,
+                        replies: [
+                            {username: '新手玩家', content: '感谢分享！这个方法真的有效，我已经升了10级了！', timestamp: '2023-10-15 18:20'}
+                        ]
+                    },
+                    {
+                        id: 2,
+                        username: '团队领袖',
+                        title: '公会招募新成员',
+                        content: '我们公会正在招募活跃玩家，要求每周在线时间超过10小时，有意者请留言或私信我。',
+                        tags: ['组队招募'],
+                        timestamp: '2023-10-14 20:30',
+                        likes: 12,
+                        replies: []
+                    },
+                    {
+                        id: 3,
+                        username: '游戏小白',
+                        title: '卡在第三关过不去',
+                        content: '第三关的BOSS太难打了，有没有大佬能分享一下打法和装备搭配？',
+                        tags: ['问题求助'],
+                        timestamp: '2023-10-13 13:20',
+                        likes: 7,
+                        replies: [
+                            {username: '高玩', content: '建议先提升装备等级，BOSS的弱点在背后，多绕后攻击。', timestamp: '2023-10-13 15:40'},
+                            {username: '攻略作者', content: '我写了一篇详细攻略，可以参考一下：www.example.com', timestamp: '2023-10-13 17:10'}
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化用户状态
+            initUserState();
+            
+            // 初始化论坛切换
+            initForumTabs();
+            
+            // 初始化标签选择
+            initTagSelection();
+            
+            // 初始化表单提交
+            initFormSubmit();
+            
+            // 初始化模态框
+            initModals();
+            
+            // 初始化协议相关功能
+            initAgreement();
+            
+            // 渲染初始消息
+            renderMessages('app');
+            renderMessages('game');
+            
+            // 更新消息计数
+            updateMessageCounts();
+            
+            // 更新开发者面板统计
+            updateAdminStats();
+        });
+
+        // 初始化用户状态
+        function initUserState() {
+            if (currentUser) {
+                // 用户已登录
+                showLoggedInState();
+            } else {
+                // 用户未登录
+                showLoggedOutState();
+            }
+        }
+
+        // 显示登录状态
+        function showLoggedInState() {
+            // 更新导航栏
+            document.getElementById('auth-buttons').style.display = 'none';
+            document.getElementById('user-info-display').style.display = 'flex';
+            document.getElementById('current-username').textContent = currentUser.username;
+            document.getElementById('current-user-avatar').textContent = getAvatarLetter(currentUser.username);
+            document.getElementById('welcome-username').textContent = currentUser.username;
+            document.getElementById('user-welcome').style.display = 'block';
+            
+            // 检查是否是开发者
+            const user = users.find(u => u.username === currentUser.username);
+            if (user && user.isDeveloper) {
+                // 添加开发者标识
+                document.getElementById('user-info-container').innerHTML += '<div class="user-badge">开发者</div>';
+                document.getElementById('current-user-avatar').classList.add('developer-avatar');
+                
+                // 显示开发者面板
+                document.getElementById('admin-panel').classList.add('active');
+                
+                // 初始化开发者面板
+                initAdminPanel();
+            } else {
+                // 隐藏开发者面板
+                document.getElementById('admin-panel').classList.remove('active');
+            }
+            
+            // 显示发帖表单
+            document.getElementById('app-post-form').style.display = 'block';
+            document.getElementById('game-post-form').style.display = 'block';
+            
+            // 隐藏登录提示
+            document.getElementById('app-login-prompt').style.display = 'none';
+            document.getElementById('game-login-prompt').style.display = 'none';
+            
+            // 绑定登出按钮
+            document.getElementById('logout-btn').addEventListener('click', logout);
+        }
+
+        // 显示登出状态
+        function showLoggedOutState() {
+            // 更新导航栏
+            document.getElementById('auth-buttons').style.display = 'flex';
+            document.getElementById('user-info-display').style.display = 'none';
+            document.getElementById('user-welcome').style.display = 'none';
+            
+            // 隐藏开发者面板
+            document.getElementById('admin-panel').classList.remove('active');
+            
+            // 隐藏发帖表单
+            document.getElementById('app-post-form').style.display = 'none';
+            document.getElementById('game-post-form').style.display = 'none';
+            
+            // 显示登录提示
+            document.getElementById('app-login-prompt').style.display = 'block';
+            document.getElementById('game-login-prompt').style.display = 'block';
+            
+            // 绑定登录提示按钮
+            document.getElementById('app-open-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('active');
+            });
+            document.getElementById('app-open-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.add('active');
+            });
+            document.getElementById('game-open-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('active');
+            });
+            document.getElementById('game-open-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.add('active');
+            });
+        }
+
+        // 获取用户头像首字母
+        function getAvatarLetter(username) {
+            return username.charAt(0).toUpperCase();
+        }
+
+        // 初始化协议相关功能
+        function initAgreement() {
+            // 显示协议链接
+            document.getElementById('show-agreement-login').addEventListener('click', () => {
+                document.getElementById('agreement-modal').classList.add('active');
+            });
+            
+            document.getElementById('show-agreement-register').addEventListener('click', () => {
+                document.getElementById('agreement-modal').classList.add('active');
+            });
+            
+            document.getElementById('show-agreement-footer').addEventListener('click', () => {
+                document.getElementById('agreement-modal').classList.add('active');
+            });
+            
+            document.getElementById('show-agreement-footer2').addEventListener('click', () => {
+                document.getElementById('agreement-modal').classList.add('active');
+            });
+            
+            // 协议模态框按钮
+            document.getElementById('accept-agreement').addEventListener('click', () => {
+                document.getElementById('agreement-modal').classList.remove('active');
+            });
+            
+            document.getElementById('decline-agreement').addEventListener('click', () => {
+                document.getElementById('agreement-modal').classList.remove('active');
+                alert('您需要同意用户协议才能使用论坛功能。');
+            });
+            
+            // 关闭协议模态框
+            document.getElementById('agreement-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('agreement-modal')) {
+                    document.getElementById('agreement-modal').classList.remove('active');
+                }
+            });
+        }
+
+        // 论坛选项卡切换
+        function initForumTabs() {
+            const tabs = document.querySelectorAll('.forum-tab');
+            const forums = document.querySelectorAll('.forum-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const forumId = this.getAttribute('data-forum');
+                    
+                    // 更新活跃选项卡
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应论坛
+                    forums.forEach(forum => {
+                        forum.classList.remove('active');
+                        if (forum.id === forumId) {
+                            forum.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+
+        // 标签选择功能
+        function initTagSelection() {
+            // 小程序论坛标签
+            const appTags = document.querySelectorAll('#app-tags-container .tag');
+            const appSelectedTagsInput = document.getElementById('app-selected-tags');
+            let appSelectedTags = [];
+            
+            appTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const tagText = this.getAttribute('data-tag');
+                    
+                    if (this.classList.contains('selected')) {
+                        // 取消选择
+                        this.classList.remove('selected');
+                        appSelectedTags = appSelectedTags.filter(t => t !== tagText);
+                    } else {
+                        // 选择标签
+                        this.classList.add('selected');
+                        appSelectedTags.push(tagText);
+                    }
+                    
+                    appSelectedTagsInput.value = appSelectedTags.join(',');
+                });
+            });
+            
+            // 游戏论坛标签
+            const gameTags = document.querySelectorAll('#game-tags-container .tag');
+            const gameSelectedTagsInput = document.getElementById('game-selected-tags');
+            let gameSelectedTags = [];
+            
+            gameTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const tagText = this.getAttribute('data-tag');
+                    
+                    if (this.classList.contains('selected')) {
+                        // 取消选择
+                        this.classList.remove('selected');
+                        gameSelectedTags = gameSelectedTags.filter(t => t !== tagText);
+                    } else {
+                        // 选择标签
+                        this.classList.add('selected');
+                        gameSelectedTags.push(tagText);
+                    }
+                    
+                    gameSelectedTagsInput.value = gameSelectedTags.join(',');
+                });
+            });
+        }
+
+        // 初始化模态框
+        function initModals() {
+            // 登录模态框
+            document.getElementById('open-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('active');
+            });
+            
+            document.getElementById('close-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.remove('active');
+                document.getElementById('login-error').style.display = 'none';
+            });
+            
+            // 注册模态框
+            document.getElementById('open-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.add('active');
+            });
+            
+            document.getElementById('close-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.remove('active');
+                document.getElementById('register-error').style.display = 'none';
+            });
+            
+            // 点击模态框背景关闭
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.getElementById('login-error').style.display = 'none';
+                        document.getElementById('register-error').style.display = 'none';
+                    }
+                });
+            });
+            
+            // 登录表单提交
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                const agreementChecked = document.getElementById('login-agreement').checked;
+                const errorDiv = document.getElementById('login-error');
+                
+                // 检查是否同意协议
+                if (!agreementChecked) {
+                    errorDiv.textContent = '请阅读并同意用户协议！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 验证用户
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    // 登录成功
+                    currentUser = {
+                        username: user.username,
+                        avatarLetter: getAvatarLetter(user.username),
+                        isDeveloper: user.isDeveloper || false
+                    };
+                    
+                    // 保存到localStorage
+                    localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
+                    
+                    // 关闭模态框
+                    document.getElementById('login-modal').classList.remove('active');
+                    errorDiv.style.display = 'none';
+                    
+                    // 更新UI
+                    showLoggedInState();
+                    
+                    // 清空表单
+                    this.reset();
+                    
+                    alert('登录成功！');
+                } else {
+                    // 登录失败
+                    errorDiv.textContent = '用户名或密码错误！';
+                    errorDiv.style.display = 'block';
+                }
+            });
+            
+            // 注册表单提交
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('register-username').value.trim();
+                const password = document.getElementById('register-password').value.trim();
+                const passwordConfirm = document.getElementById('register-password-confirm').value.trim();
+                const agreementChecked = document.getElementById('register-agreement').checked;
+                const errorDiv = document.getElementById('register-error');
+                
+                // 检查是否同意协议
+                if (!agreementChecked) {
+                    errorDiv.textContent = '请阅读并同意用户协议！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 验证输入
+                if (username.length < 3 || username.length > 20) {
+                    errorDiv.textContent = '用户名长度必须在3-20个字符之间！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                    errorDiv.textContent = '用户名只能包含字母、数字和下划线！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    errorDiv.textContent = '密码长度不能少于6位！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (password !== passwordConfirm) {
+                    errorDiv.textContent = '两次输入的密码不一致！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 检查用户名是否已存在
+                const userExists = users.some(u => u.username === username);
+                
+                if (userExists) {
+                    errorDiv.textContent = '用户名已存在，请选择其他用户名！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 检查是否尝试注册开发者账户
+                let isDeveloper = false;
+                if (username.toLowerCase() === 'yao') {
+                    isDeveloper = true;
+                    alert('注意：您正在注册开发者账户，将拥有管理权限！');
+                }
+                
+                // 创建新用户
+                const newUser = {
+                    username: username,
+                    password: password,
+                    avatarLetter: getAvatarLetter(username),
+                    joinDate: new Date().toISOString().split('T')[0],
+                    isDeveloper: isDeveloper,
+                    agreedToTerms: true,
+                    isBanned: false
+                };
+                
+                // 添加到用户列表
+                users.push(newUser);
+                
+                // 保存到localStorage
+                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                
+                // 自动登录
+                currentUser = {
+                    username: newUser.username,
+                    avatarLetter: newUser.avatarLetter,
+                    isDeveloper: newUser.isDeveloper
+                };
+                
+                localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
+                
+                // 关闭模态框
+                document.getElementById('register-modal').classList.remove('active');
+                errorDiv.style.display = 'none';
+                
+                // 更新UI
+                showLoggedInState();
+                
+                // 清空表单
+                this.reset();
+                
+                alert('注册成功！已自动登录。');
+            });
+        }
+
+        // 初始化开发者面板
+        function initAdminPanel() {
+            // 开发者选项卡切换
+            const adminTabs = document.querySelectorAll('.admin-tab');
+            const adminContents = document.querySelectorAll('.admin-content');
+            
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新活跃选项卡
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应内容
+                    adminContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // 加载用户数据
+            loadUsersTable();
+            loadBannedUsersTable();
+            
+            // 绑定封禁/解封按钮事件
+            bindAdminActions();
+        }
+
+        // 加载用户表格
+        function loadUsersTable() {
+            const tableBody = document.getElementById('users-table-body');
+            tableBody.innerHTML = '';
+            
+            // 过滤被封禁的用户
+            const activeUsers = users.filter(user => !user.isBanned);
+            
+            activeUsers.forEach(user => {
+                const row = document.createElement('tr');
+                const joinDate = user.joinDate || '未知';
+                const isDeveloper = user.username === DEVELOPER_USERNAME || user.isDeveloper;
+                
+                row.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-avatar-small ${isDeveloper ? 'developer-avatar' : ''}">${user.avatarLetter}</div>
+                            <div>
+                                <div style="font-weight: 600;">${user.username}</div>
+                                ${isDeveloper ? '<div style="font-size: 0.8rem; color: #f59e0b;">开发者</div>' : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${joinDate}</td>
+                    <td><span class="user-status status-active">活跃</span></td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            ${user.username !== DEVELOPER_USERNAME ? `<button class="action-btn ban-btn" data-username="${user.username}">封禁</button>` : ''}
+                            ${user.username !== DEVELOPER_USERNAME ? `<button class="action-btn delete-btn" data-username="${user.username}">删除</button>` : ''}
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 加载封禁用户表格
+        function loadBannedUsersTable() {
+            const tableBody = document.getElementById('banned-table-body');
+            tableBody.innerHTML = '';
+            
+            // 过滤被封禁的用户
+            const bannedUsers = users.filter(user => user.isBanned);
+            
+            bannedUsers.forEach(user => {
+                const row = document.createElement('tr');
+                const banDate = user.banDate || '未知';
+                
+                row.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-avatar-small banned-user-avatar">${user.avatarLetter}</div>
+                            <div>
+                                <div style="font-weight: 600; color: #ef4444;">${user.username}</div>
+                                <div style="font-size: 0.8rem; color: #ef4444;">已封禁</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${banDate}</td>
+                    <td>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="action-btn unban-btn" data-username="${user.username}">解封</button>
+                            <button class="action-btn delete-btn" data-username="${user.username}">删除</button>
+                        </div>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 绑定管理员操作
+        function bindAdminActions() {
+            // 封禁用户
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('ban-btn')) {
+                    const username = e.target.getAttribute('data-username');
+                    if (confirm(`确定要封禁用户 "${username}" 吗？`)) {
+                        banUser(username);
+                    }
+                }
+                
+                // 解封用户
+                if (e.target.classList.contains('unban-btn')) {
+                    const username = e.target.getAttribute('data-username');
+                    if (confirm(`确定要解封用户 "${username}" 吗？`)) {
+                        unbanUser(username);
+                    }
+                }
+                
+                // 删除用户
+                if (e.target.classList.contains('delete-btn')) {
+                    const username = e.target.getAttribute('data-username');
+                    if (confirm(`确定要删除用户 "${username}" 吗？此操作不可恢复！`)) {
+                        deleteUser(username);
+                    }
+                }
+            });
+        }
+
+        // 封禁用户
+        function banUser(username) {
+            if (username === DEVELOPER_USERNAME) {
+                alert('不能封禁开发者账户！');
+                return;
+            }
+            
+            const userIndex = users.findIndex(u => u.username === username);
+            if (userIndex !== -1) {
+                users[userIndex].isBanned = true;
+                users[userIndex].banDate = new Date().toLocaleString('zh-CN');
+                
+                // 保存到localStorage
+                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                
+                // 重新加载表格
+                loadUsersTable();
+                loadBannedUsersTable();
+                
+                // 更新统计
+                updateAdminStats();
+                
+                alert(`用户 "${username}" 已被封禁。`);
+            }
+        }
+
+        // 解封用户
+        function unbanUser(username) {
+            const userIndex = users.findIndex(u => u.username === username);
+            if (userIndex !== -1) {
+                users[userIndex].isBanned = false;
+                delete users[userIndex].banDate;
+                
+                // 保存到localStorage
+                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                
+                // 重新加载表格
+                loadUsersTable();
+                loadBannedUsersTable();
+                
+                // 更新统计
+                updateAdminStats();
+                
+                alert(`用户 "${username}" 已被解封。`);
+            }
+        }
+
+        // 删除用户
+        function deleteUser(username) {
+            if (username === DEVELOPER_USERNAME) {
+                alert('不能删除开发者账户！');
+                return;
+            }
+            
+            // 从用户列表中删除
+            users = users.filter(u => u.username !== username);
+            
+            // 保存到localStorage
+            localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+            
+            // 重新加载表格
+            loadUsersTable();
+            loadBannedUsersTable();
+            
+            // 更新统计
+            updateAdminStats();
+            
+            alert(`用户 "${username}" 已被删除。`);
+        }
+
+        // 更新开发者面板统计
+        function updateAdminStats() {
+            // 用户统计
+            const totalUsers = users.length;
+            const activeUsers = users.filter(u => !u.isBanned).length;
+            const bannedUsers = users.filter(u => u.isBanned).length;
+            
+            // 消息统计
+            const appMessages = forums.app.messages.length;
+            const gameMessages = forums.game.messages.length;
+            const totalMessages = appMessages + gameMessages;
+            
+            // 回复统计
+            let totalReplies = 0;
+            let totalLikes = 0;
+            
+            // 计算小程序论坛的回复和点赞
+            forums.app.messages.forEach(msg => {
+                totalReplies += msg.replies.length;
+                totalLikes += msg.likes;
+            });
+            
+            // 计算游戏论坛的回复和点赞
+            forums.game.messages.forEach(msg => {
+                totalReplies += msg.replies.length;
+                totalLikes += msg.likes;
+            });
+            
+            // 更新统计显示
+            document.getElementById('total-users').textContent = totalUsers;
+            document.getElementById('active-users').textContent = activeUsers;
+            document.getElementById('banned-users').textContent = bannedUsers;
+            document.getElementById('total-messages').textContent = totalMessages;
+            document.getElementById('app-messages-count').textContent = appMessages;
+            document.getElementById('game-messages-count').textContent = gameMessages;
+            document.getElementById('total-replies').textContent = totalReplies;
+            document.getElementById('total-likes').textContent = totalLikes;
+        }
+
+        // 表单提交功能
+        function initFormSubmit() {
+            // 小程序论坛表单
+            const appForm = document.getElementById('app-message-form');
+            appForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    alert('请先登录！');
+                    document.getElementById('login-modal').classList.add('active');
+                    return;
+                }
+                
+                // 检查用户是否被封禁
+                const user = users.find(u => u.username === currentUser.username);
+                if (user && user.isBanned) {
+                    alert('您的账户已被封禁，无法发布消息！');
+                    return;
+                }
+                
+                const title = document.getElementById('app-title').value.trim();
+                const content = document.getElementById('app-content').value.trim();
+                const tags = document.getElementById('app-selected-tags').value.split(',').filter(tag => tag);
+                const errorDiv = document.getElementById('app-form-error');
+                
+                // 敏感词检查
+                const containsSensitiveWords = checkSensitiveWords(title + ' ' + content);
+                if (containsSensitiveWords) {
+                    errorDiv.textContent = '内容包含敏感词汇，请修改后重新提交！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (!title || !content) {
+                    errorDiv.textContent = '请填写所有必填字段！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 创建新消息
+                const newMessage = {
+                    id: forums.app.messages.length + 1,
+                    username: currentUser.username,
+                    title: title,
+                    content: content,
+                    tags: tags,
+                    timestamp: new Date().toLocaleString('zh-CN'),
+                    likes: 0,
+                    replies: []
+                };
+                
+                // 添加到消息列表
+                forums.app.messages.unshift(newMessage);
+                
+                // 重新渲染消息
+                renderMessages('app');
+                
+                // 更新消息计数
+                updateMessageCounts();
+                
+                // 更新开发者统计
+                updateAdminStats();
+                
+                // 重置表单
+                appForm.reset();
+                document.getElementById('app-selected-tags').value = '';
+                document.querySelectorAll('#app-tags-container .tag.selected').forEach(tag => {
+                    tag.classList.remove('selected');
+                });
+                errorDiv.style.display = 'none';
+                
+                alert('消息发布成功！');
+            });
+            
+            // 游戏论坛表单
+            const gameForm = document.getElementById('game-message-form');
+            gameForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    alert('请先登录！');
+                    document.getElementById('login-modal').classList.add('active');
+                    return;
+                }
+                
+                // 检查用户是否被封禁
+                const user = users.find(u => u.username === currentUser.username);
+                if (user && user.isBanned) {
+                    alert('您的账户已被封禁，无法发布消息！');
+                    return;
+                }
+                
+                const title = document.getElementById('game-title').value.trim();
+                const content = document.getElementById('game-content').value.trim();
+                const tags = document.getElementById('game-selected-tags').value.split(',').filter(tag => tag);
+                const errorDiv = document.getElementById('game-form-error');
+                
+                // 敏感词检查
+                const containsSensitiveWords = checkSensitiveWords(title + ' ' + content);
+                if (containsSensitiveWords) {
+                    errorDiv.textContent = '内容包含敏感词汇，请修改后重新提交！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (!title || !content) {
+                    errorDiv.textContent = '请填写所有必填字段！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 创建新消息
+                const newMessage = {
+                    id: forums.game.messages.length + 1,
+                    username: currentUser.username,
+                    title: title,
+                    content: content,
+                    tags: tags,
+                    timestamp: new Date().toLocaleString('zh-CN'),
+                    likes: 0,
+                    replies: []
+                };
+                
+                // 添加到消息列表
+                forums.game.messages.unshift(newMessage);
+                
+                // 重新渲染消息
+                renderMessages('game');
+                
+                // 更新消息计数
+                updateMessageCounts();
+                
+                // 更新开发者统计
+                updateAdminStats();
+                
+                // 重置表单
+                gameForm.reset();
+                document.getElementById('game-selected-tags').value = '';
+                document.querySelectorAll('#game-tags-container .tag.selected').forEach(tag => {
+                    tag.classList.remove('selected');
+                });
+                errorDiv.style.display = 'none';
+                
+                alert('消息发布成功！');
+            });
+        }
+
+        // 敏感词检查函数
+        function checkSensitiveWords(text) {
+            const lowerText = text.toLowerCase();
+            for (const word of sensitiveWords) {
+                if (lowerText.includes(word.toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 渲染消息列表
+        function renderMessages(forumType) {
+            const messagesList = document.getElementById(`${forumType}-messages-list`);
+            const messages = forums[forumType].messages;
+            
+            // 清空当前列表
+            messagesList.innerHTML = '';
+            
+            // 如果没有消息
+            if (messages.length === 0) {
+                messagesList.innerHTML = `
+                    <div class="login-prompt">
+                        <h3>暂无消息</h3>
+                        <p>还没有用户发表消息，成为第一个发言的人吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 渲染每条消息
+            messages.forEach(message => {
+                // 检查用户是否被封禁
+                const user = users.find(u => u.username === message.username);
+                const isBanned = user && user.isBanned;
+                const isDeveloper = message.username === DEVELOPER_USERNAME || (user && user.isDeveloper);
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${forumType === 'game' ? 'game-message' : ''} ${isBanned ? 'banned-message' : ''}`;
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-user">
+                            <div class="user-avatar ${isBanned ? 'banned-user-avatar' : ''}">${getAvatarLetter(message.username)}</div>
+                            <div class="user-info">
+                                <div class="user-name ${isBanned ? 'banned-user' : ''}">${message.username}</div>
+                                <div class="user-title ${isDeveloper ? 'developer-title' : ''}">
+                                    ${isDeveloper ? '开发者' : (isBanned ? '已封禁' : '用户')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message-time">${message.timestamp}</div>
+                    </div>
+                    <h3 class="message-title">${message.title}</h3>
+                    <div class="message-content">${message.content}</div>
+                    ${message.tags.length > 0 ? `
+                        <div class="message-tags">
+                            ${message.tags.map(tag => `<span class="tag ${forumType === 'game' ? 'game-tag' : ''}">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="message-footer">
+                        <div class="message-actions">
+                            <button class="message-action like-btn" data-forum="${forumType}" data-id="${message.id}">
+                                <i class="far fa-heart"></i> <span class="like-count">${message.likes}</span> 赞
+                            </button>
+                            <button class="message-action reply-btn" data-forum="${forumType}" data-id="${message.id}">
+                                <i class="far fa-comment"></i> ${message.replies.length} 回复
+                            </button>
+                        </div>
+                        ${currentUser && !isBanned ? `<button class="message-action reply-btn" data-forum="${forumType}" data-id="${message.id}">回复</button>` : ''}
+                    </div>
+                    ${currentUser && !isBanned ? `
+                    <div class="reply-form" id="reply-form-${forumType}-${message.id}">
+                        <div class="form-group">
+                            <label class="form-label">回复内容</label>
+                            <textarea class="form-textarea reply-content" placeholder="请输入回复内容..." required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary cancel-reply">取消</button>
+                            <button type="button" class="btn btn-primary submit-reply" data-forum="${forumType}" data-id="${message.id}">提交回复</button>
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${message.replies.length > 0 ? `
+                        <div class="replies-container">
+                            ${message.replies.map((reply, index) => {
+                                const replyUser = users.find(u => u.username === reply.username);
+                                const replyIsBanned = replyUser && replyUser.isBanned;
+                                const replyIsDeveloper = reply.username === DEVELOPER_USERNAME || (replyUser && replyUser.isDeveloper);
+                                
+                                return `
+                                <div class="reply ${forumType === 'game' ? 'game-reply' : ''}">
+                                    <div class="reply-header">
+                                        <div class="reply-user">
+                                            <div class="reply-user-avatar ${replyIsBanned ? 'banned-user-avatar' : ''}">${getAvatarLetter(reply.username)}</div>
+                                            <span class="user-name ${replyIsBanned ? 'banned-user' : ''}">${reply.username}</span>
+                                        </div>
+                                        <div class="message-time">${reply.timestamp}</div>
+                                    </div>
+                                    <div class="reply-content">${reply.content}</div>
+                                </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                
+                messagesList.appendChild(messageDiv);
+            });
+            
+            // 绑定事件
+            bindMessageEvents(forumType);
+        }
+
+        // 绑定消息事件
+        function bindMessageEvents(forumType) {
+            // 点赞按钮
+            document.querySelectorAll(`.like-btn[data-forum="${forumType}"]`).forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!currentUser) {
+                        alert('请先登录！');
+                        document.getElementById('login-modal').classList.add('active');
+                        return;
+                    }
+                    
+                    // 检查用户是否被封禁
+                    const user = users.find(u => u.username === currentUser.username);
+                    if (user && user.isBanned) {
+                        alert('您的账户已被封禁，无法点赞！');
+                        return;
+                    }
+                    
+                    const messageId = parseInt(this.getAttribute('data-id'));
+                    const message = forums[forumType].messages.find(m => m.id === messageId);
+                    
+                    if (message) {
+                        message.likes++;
+                        this.querySelector('.like-count').textContent = message.likes;
+                        updateAdminStats();
+                    }
+                });
+            });
+            
+            // 回复按钮
+            document.querySelectorAll(`.reply-btn[data-forum="${forumType}"]`).forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!currentUser) {
+                        alert('请先登录！');
+                        document.getElementById('login-modal').classList.add('active');
+                        return;
+                    }
+                    
+                    // 检查用户是否被封禁
+                    const user = users.find(u => u.username === currentUser.username);
+                    if (user && user.isBanned) {
+                        alert('您的账户已被封禁，无法回复！');
+                        return;
+                    }
+                    
+                    const messageId = parseInt(this.getAttribute('data-id'));
+                    const replyForm = document.getElementById(`reply-form-${forumType}-${messageId}`);
+                    
+                    if (!replyForm) return;
+                    
+                    // 切换显示回复表单
+                    if (replyForm.style.display === 'block') {
+                        replyForm.style.display = 'none';
+                    } else {
+                        replyForm.style.display = 'block';
+                    }
+                    
+                    // 绑定取消按钮
+                    replyForm.querySelector('.cancel-reply').addEventListener('click', () => {
+                        replyForm.style.display = 'none';
+                        replyForm.querySelector('.reply-content').value = '';
+                    });
+                    
+                    // 绑定提交按钮
+                    replyForm.querySelector('.submit-reply').addEventListener('click', function() {
+                        const content = replyForm.querySelector('.reply-content').value.trim();
+                        
+                        if (!content) {
+                            alert('请输入回复内容！');
+                            return;
+                        }
+                        
+                        // 敏感词检查
+                        if (checkSensitiveWords(content)) {
+                            alert('回复内容包含敏感词汇，请修改后重新提交！');
+                            return;
+                        }
+                        
+                        const message = forums[forumType].messages.find(m => m.id === messageId);
+                        
+                        if (message) {
+                            message.replies.push({
+                                username: currentUser.username,
+                                content: content,
+                                timestamp: new Date().toLocaleString('zh-CN')
+                            });
+                            
+                            // 重新渲染消息
+                            renderMessages(forumType);
+                            
+                            // 更新开发者统计
+                            updateAdminStats();
+                            
+                            alert('回复成功！');
+                        }
+                    });
+                });
+            });
+        }
+
+        // 更新消息计数
+        function updateMessageCounts() {
+            document.getElementById('app-message-count').textContent = `${forums.app.messages.length} 条消息`;
+            document.getElementById('game-message-count').textContent = `${forums.game.messages.length} 条消息`;
+        }
+
+        // 登出功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                currentUser = null;
+                localStorage.removeItem('yield-orbit-current-user');
+                showLoggedOutState();
+                alert('已成功退出登录！');
+            }
+        }
+        
+        // 跳转到官网函数（备用）
+        function goToHomepage() {
+            window.open('https://yield-orbit.github.io/org/', '_blank');
+        }
+    </script>
+</body>
+</html> 点击访问官网
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 论坛板块选择 -->
+    <section id="forum-section">
+        <div class="container">
+            <div class="forum-tabs">
+                <div class="forum-tab active" data-forum="app-forum">
+                    <i class="fas fa-chart-line"></i> 小程序论坛
+                </div>
+                <div class="forum-tab" data-forum="game-forum">
+                    <i class="fas fa-gamepad"></i> 游戏论坛
+                </div>
+            </div>
+
+            <!-- 小程序论坛 -->
+            <div id="app-forum" class="forum-content app-forum active">
+                <div class="forum-header">
+                    <h2 class="forum-title"><i class="fas fa-chart-line"></i> 小程序技术论坛</h2>
+                    <div class="forum-stats">
+                        <span id="app-message-count">3 条消息</span>
+                    </div>
+                </div>
+
+                <!-- 登录提示 -->
+                <div id="app-login-prompt" class="login-prompt" style="display: none;">
+                    <h3>请先登录</h3>
+                    <p>登录后即可发表消息、回复和参与讨论</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                        <button class="login-btn" id="app-open-login-modal">登录</button>
+                        <button class="register-btn" id="app-open-register-modal">注册</button>
+                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> 访问官网
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 发消息表单 -->
+                <div id="app-post-form" class="post-form" style="display: none;">
+                    <h3 class="form-title">发表新消息</h3>
+                    <form id="app-message-form">
+                        <div class="form-group">
+                            <label class="form-label" for="app-title">消息标题</label>
+                            <input type="text" id="app-title" class="form-input" placeholder="请输入消息标题" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="app-content">消息内容</label>
+                            <textarea id="app-content" class="form-textarea" placeholder="请输入您要分享的内容..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">标签（可选）</label>
+                            <div class="message-tags" id="app-tags-container">
+                                <span class="tag" data-tag="技术问题">技术问题</span>
+                                <span class="tag" data-tag="使用技巧">使用技巧</span>
+                                <span class="tag" data-tag="功能建议">功能建议</span>
+                                <span class="tag" data-tag="bug反馈">bug反馈</span>
+                            </div>
+                            <input type="hidden" id="app-selected-tags">
+                        </div>
+                        <div id="app-form-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">清空</button>
+                            <button type="submit" class="btn btn-primary">发布消息</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 消息列表 -->
+                <div class="messages-container" id="app-messages-list">
+                    <!-- 消息将通过JavaScript动态添加 -->
+                </div>
+            </div>
+
+            <!-- 游戏论坛 -->
+            <div id="game-forum" class="forum-content game-forum">
+                <div class="forum-header">
+                    <h2 class="forum-title"><i class="fas fa-gamepad"></i> 游戏玩家社区</h2>
+                    <div class="forum-stats">
+                        <span id="game-message-count">3 条消息</span>
+                    </div>
+                </div>
+
+                <!-- 登录提示 -->
+                <div id="game-login-prompt" class="login-prompt" style="display: none;">
+                    <h3>请先登录</h3>
+                    <p>登录后即可发表消息、回复和参与讨论</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+                        <button class="login-btn" id="game-open-login-modal">登录</button>
+                        <button class="register-btn" id="game-open-register-modal">注册</button>
+                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                            <i class="fas fa-external-link-alt"></i> 访问官网
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 发消息表单 -->
+                <div id="game-post-form" class="post-form" style="display: none;">
+                    <h3 class="form-title">发表新消息</h3>
+                    <form id="game-message-form">
+                        <div class="form-group">
+                            <label class="form-label" for="game-title">消息标题</label>
+                            <input type="text" id="game-title" class="form-input" placeholder="请输入消息标题" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="game-content">消息内容</label>
+                            <textarea id="game-content" class="form-textarea" placeholder="请输入您要分享的内容..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">标签（可选）</label>
+                            <div class="message-tags" id="game-tags-container">
+                                <span class="tag game-tag" data-tag="游戏攻略">游戏攻略</span>
+                                <span class="tag game-tag" data-tag="组队招募">组队招募</span>
+                                <span class="tag game-tag" data-tag="问题求助">问题求助</span>
+                                <span class="tag game-tag" data-tag="经验分享">经验分享</span>
+                            </div>
+                            <input type="hidden" id="game-selected-tags">
+                        </div>
+                        <div id="game-form-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-secondary">清空</button>
+                            <button type="submit" class="btn btn-primary">发布消息</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 消息列表 -->
+                <div class="messages-container" id="game-messages-list">
+                    <!-- 消息将通过JavaScript动态添加 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="contact" style="background-color: rgba(15, 23, 42, 0.98); padding: 60px 0 30px; margin-top: 60px; border-top: 1px solid #334155;">
+        <div class="container">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 40px;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">关于论坛</h3>
+                    <p style="color: #94a3b8;">Yield Orbit社区论坛是用户交流的平台，在这里可以讨论统计小程序使用技巧和游戏攻略。</p>
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">快速链接</h3>
+                    <ul style="list-style: none; color: #94a3b8;">
+                        <li style="margin-bottom: 10px;"><a href="#home" style="color: #94a3b8; text-decoration: none;">论坛首页</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#app-forum" style="color: #94a3b8; text-decoration: none;">小程序论坛</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#game-forum" style="color: #94a3b8; text-decoration: none;">游戏论坛</a></li>
+                        <li style="margin-bottom: 10px;"><a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #94a3b8; text-decoration: none;">官网首页</a></li>
+                    </ul>
+                </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">官方网站</h3>
+                    <p style="color: #94a3b8; margin-bottom: 20px;">访问Yield Orbit官网了解更多产品信息：</p>
+                    <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> 访问官网
+                    </button>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 30px; border-top: 1px solid #334155; color: #94a3b8;">
+                <p>&copy; 2023 Yield Orbit. 保留所有权利。</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">社区论坛版本 1.0 | <a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #60a5fa; text-decoration: none;">前往官网</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 敏感词列表（示例）
+        const sensitiveWords = [
+            '敏感词1', '敏感词2', '不良词汇', '违规内容',
+            '暴力', '色情', '赌博', '毒品', '反动'
+        ];
+        
+        // 用户数据存储
+        let users = JSON.parse(localStorage.getItem('yield-orbit-users')) || [
+            {
+                username: 'admin',
+                password: 'admin123',
+                avatarLetter: 'A',
+                joinDate: '2023-01-01'
+            },
+            {
+                username: 'user1',
+                password: 'user123',
+                avatarLetter: 'U',
+                joinDate: '2023-10-01'
+            }
+        ];
+        
+        // 当前登录用户
+        let currentUser = JSON.parse(localStorage.getItem('yield-orbit-current-user')) || null;
+        
+        // 初始示例数据
+        let forums = {
+            'app': {
+                messages: [
+                    {
+                        id: 1,
+                        username: '数据分析师',
+                        title: '如何导出统计报表？',
+                        content: '我在使用统计小程序时遇到了导出问题，总是提示格式错误。有谁知道如何正确导出Excel格式的报表吗？',
+                        tags: ['技术问题', 'bug反馈'],
+                        timestamp: '2023-10-15 14:30',
+                        likes: 8,
+                        replies: [
+                            {username: '技术支持', content: '请检查您的数据格式，确保没有特殊字符。', timestamp: '2023-10-15 15:00'},
+                            {username: '老用户', content: '可以尝试先导出为CSV格式，再转换为Excel。', timestamp: '2023-10-15 16:20'}
+                        ]
+                    },
+                    {
+                        id: 2,
+                        username: '产品经理',
+                        title: '数据可视化功能建议',
+                        content: '建议增加更多图表类型，特别是动态图表和3D图表，这样数据分析会更加直观。',
+                        tags: ['功能建议'],
+                        timestamp: '2023-10-14 09:15',
+                        likes: 15,
+                        replies: []
+                    },
+                    {
+                        id: 3,
+                        username: '新手用户',
+                        title: '入门教程推荐',
+                        content: '刚接触这个统计小程序，有没有推荐的入门教程或学习资料？谢谢大家！',
+                        tags: ['使用技巧'],
+                        timestamp: '2023-10-13 11:45',
+                        likes: 5,
+                        replies: [
+                            {username: '资深用户', content: '官方文档就是最好的入门材料，建议从基础功能开始学习。', timestamp: '2023-10-13 14:30'}
+                        ]
+                    }
+                ]
+            },
+            'game': {
+                messages: [
+                    {
+                        id: 1,
+                        username: '游戏达人',
+                        title: '快速升级攻略分享',
+                        content: '发现一个快速升级的方法：完成主线任务后，反复刷经验副本，配合双倍经验卡，一天就能满级！',
+                        tags: ['游戏攻略', '经验分享'],
+                        timestamp: '2023-10-15 16:45',
+                        likes: 23,
+                        replies: [
+                            {username: '新手玩家', content: '感谢分享！这个方法真的有效，我已经升了10级了！', timestamp: '2023-10-15 18:20'}
+                        ]
+                    },
+                    {
+                        id: 2,
+                        username: '团队领袖',
+                        title: '公会招募新成员',
+                        content: '我们公会正在招募活跃玩家，要求每周在线时间超过10小时，有意者请留言或私信我。',
+                        tags: ['组队招募'],
+                        timestamp: '2023-10-14 20:30',
+                        likes: 12,
+                        replies: []
+                    },
+                    {
+                        id: 3,
+                        username: '游戏小白',
+                        title: '卡在第三关过不去',
+                        content: '第三关的BOSS太难打了，有没有大佬能分享一下打法和装备搭配？',
+                        tags: ['问题求助'],
+                        timestamp: '2023-10-13 13:20',
+                        likes: 7,
+                        replies: [
+                            {username: '高玩', content: '建议先提升装备等级，BOSS的弱点在背后，多绕后攻击。', timestamp: '2023-10-13 15:40'},
+                            {username: '攻略作者', content: '我写了一篇详细攻略，可以参考一下：www.example.com', timestamp: '2023-10-13 17:10'}
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化用户状态
+            initUserState();
+            
+            // 初始化论坛切换
+            initForumTabs();
+            
+            // 初始化标签选择
+            initTagSelection();
+            
+            // 初始化表单提交
+            initFormSubmit();
+            
+            // 初始化模态框
+            initModals();
+            
+            // 渲染初始消息
+            renderMessages('app');
+            renderMessages('game');
+            
+            // 更新消息计数
+            updateMessageCounts();
+        });
+
+        // 初始化用户状态
+        function initUserState() {
+            if (currentUser) {
+                // 用户已登录
+                showLoggedInState();
+            } else {
+                // 用户未登录
+                showLoggedOutState();
+            }
+        }
+
+        // 显示登录状态
+        function showLoggedInState() {
+            // 更新导航栏
+            document.getElementById('auth-buttons').style.display = 'none';
+            document.getElementById('user-info-display').style.display = 'flex';
+            document.getElementById('current-username').textContent = currentUser.username;
+            document.getElementById('current-user-avatar').textContent = getAvatarLetter(currentUser.username);
+            document.getElementById('welcome-username').textContent = currentUser.username;
+            document.getElementById('user-welcome').style.display = 'block';
+            
+            // 显示发帖表单
+            document.getElementById('app-post-form').style.display = 'block';
+            document.getElementById('game-post-form').style.display = 'block';
+            
+            // 隐藏登录提示
+            document.getElementById('app-login-prompt').style.display = 'none';
+            document.getElementById('game-login-prompt').style.display = 'none';
+            
+            // 绑定登出按钮
+            document.getElementById('logout-btn').addEventListener('click', logout);
+        }
+
+        // 显示登出状态
+        function showLoggedOutState() {
+            // 更新导航栏
+            document.getElementById('auth-buttons').style.display = 'flex';
+            document.getElementById('user-info-display').style.display = 'none';
+            document.getElementById('user-welcome').style.display = 'none';
+            
+            // 隐藏发帖表单
+            document.getElementById('app-post-form').style.display = 'none';
+            document.getElementById('game-post-form').style.display = 'none';
+            
+            // 显示登录提示
+            document.getElementById('app-login-prompt').style.display = 'block';
+            document.getElementById('game-login-prompt').style.display = 'block';
+            
+            // 绑定登录提示按钮
+            document.getElementById('app-open-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('active');
+            });
+            document.getElementById('app-open-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.add('active');
+            });
+            document.getElementById('game-open-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('active');
+            });
+            document.getElementById('game-open-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.add('active');
+            });
+        }
+
+        // 获取用户头像首字母
+        function getAvatarLetter(username) {
+            return username.charAt(0).toUpperCase();
+        }
+
+        // 论坛选项卡切换
+        function initForumTabs() {
+            const tabs = document.querySelectorAll('.forum-tab');
+            const forums = document.querySelectorAll('.forum-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const forumId = this.getAttribute('data-forum');
+                    
+                    // 更新活跃选项卡
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应论坛
+                    forums.forEach(forum => {
+                        forum.classList.remove('active');
+                        if (forum.id === forumId) {
+                            forum.classList.add('active');
+                        }
+                    });
+                });
+            });
+        }
+
+        // 标签选择功能
+        function initTagSelection() {
+            // 小程序论坛标签
+            const appTags = document.querySelectorAll('#app-tags-container .tag');
+            const appSelectedTagsInput = document.getElementById('app-selected-tags');
+            let appSelectedTags = [];
+            
+            appTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const tagText = this.getAttribute('data-tag');
+                    
+                    if (this.classList.contains('selected')) {
+                        // 取消选择
+                        this.classList.remove('selected');
+                        appSelectedTags = appSelectedTags.filter(t => t !== tagText);
+                    } else {
+                        // 选择标签
+                        this.classList.add('selected');
+                        appSelectedTags.push(tagText);
+                    }
+                    
+                    appSelectedTagsInput.value = appSelectedTags.join(',');
+                });
+            });
+            
+            // 游戏论坛标签
+            const gameTags = document.querySelectorAll('#game-tags-container .tag');
+            const gameSelectedTagsInput = document.getElementById('game-selected-tags');
+            let gameSelectedTags = [];
+            
+            gameTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const tagText = this.getAttribute('data-tag');
+                    
+                    if (this.classList.contains('selected')) {
+                        // 取消选择
+                        this.classList.remove('selected');
+                        gameSelectedTags = gameSelectedTags.filter(t => t !== tagText);
+                    } else {
+                        // 选择标签
+                        this.classList.add('selected');
+                        gameSelectedTags.push(tagText);
+                    }
+                    
+                    gameSelectedTagsInput.value = gameSelectedTags.join(',');
+                });
+            });
+        }
+
+        // 初始化模态框
+        function initModals() {
+            // 登录模态框
+            document.getElementById('open-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.add('active');
+            });
+            
+            document.getElementById('close-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.remove('active');
+                document.getElementById('login-error').style.display = 'none';
+            });
+            
+            // 注册模态框
+            document.getElementById('open-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.add('active');
+            });
+            
+            document.getElementById('close-register-modal').addEventListener('click', () => {
+                document.getElementById('register-modal').classList.remove('active');
+                document.getElementById('register-error').style.display = 'none';
+            });
+            
+            // 点击模态框背景关闭
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.getElementById('login-error').style.display = 'none';
+                        document.getElementById('register-error').style.display = 'none';
+                    }
+                });
+            });
+            
+            // 登录表单提交
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                const errorDiv = document.getElementById('login-error');
+                
+                // 验证用户
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    // 登录成功
+                    currentUser = {
+                        username: user.username,
+                        avatarLetter: getAvatarLetter(user.username)
+                    };
+                    
+                    // 保存到localStorage
+                    localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
+                    
+                    // 关闭模态框
+                    document.getElementById('login-modal').classList.remove('active');
+                    errorDiv.style.display = 'none';
+                    
+                    // 更新UI
+                    showLoggedInState();
+                    
+                    // 清空表单
+                    this.reset();
+                    
+                    alert('登录成功！');
+                } else {
+                    // 登录失败
+                    errorDiv.textContent = '用户名或密码错误！';
+                    errorDiv.style.display = 'block';
+                }
+            });
+            
+            // 注册表单提交
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('register-username').value.trim();
+                const password = document.getElementById('register-password').value.trim();
+                const passwordConfirm = document.getElementById('register-password-confirm').value.trim();
+                const errorDiv = document.getElementById('register-error');
+                
+                // 验证输入
+                if (username.length < 3 || username.length > 20) {
+                    errorDiv.textContent = '用户名长度必须在3-20个字符之间！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                    errorDiv.textContent = '用户名只能包含字母、数字和下划线！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    errorDiv.textContent = '密码长度不能少于6位！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (password !== passwordConfirm) {
+                    errorDiv.textContent = '两次输入的密码不一致！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 检查用户名是否已存在
+                const userExists = users.some(u => u.username === username);
+                
+                if (userExists) {
+                    errorDiv.textContent = '用户名已存在，请选择其他用户名！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 创建新用户
+                const newUser = {
+                    username: username,
+                    password: password,
+                    avatarLetter: getAvatarLetter(username),
+                    joinDate: new Date().toISOString().split('T')[0]
+                };
+                
+                // 添加到用户列表
+                users.push(newUser);
+                
+                // 保存到localStorage
+                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                
+                // 自动登录
+                currentUser = {
+                    username: newUser.username,
+                    avatarLetter: newUser.avatarLetter
+                };
+                
+                localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
+                
+                // 关闭模态框
+                document.getElementById('register-modal').classList.remove('active');
+                errorDiv.style.display = 'none';
+                
+                // 更新UI
+                showLoggedInState();
+                
+                // 清空表单
+                this.reset();
+                
+                alert('注册成功！已自动登录。');
+            });
+        }
+
+        // 表单提交功能
+        function initFormSubmit() {
+            // 小程序论坛表单
+            const appForm = document.getElementById('app-message-form');
+            appForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    alert('请先登录！');
+                    document.getElementById('login-modal').classList.add('active');
+                    return;
+                }
+                
+                const title = document.getElementById('app-title').value.trim();
+                const content = document.getElementById('app-content').value.trim();
+                const tags = document.getElementById('app-selected-tags').value.split(',').filter(tag => tag);
+                const errorDiv = document.getElementById('app-form-error');
+                
+                // 敏感词检查
+                const containsSensitiveWords = checkSensitiveWords(title + ' ' + content);
+                if (containsSensitiveWords) {
+                    errorDiv.textContent = '内容包含敏感词汇，请修改后重新提交！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (!title || !content) {
+                    errorDiv.textContent = '请填写所有必填字段！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 创建新消息
+                const newMessage = {
+                    id: forums.app.messages.length + 1,
+                    username: currentUser.username,
+                    title: title,
+                    content: content,
+                    tags: tags,
+                    timestamp: new Date().toLocaleString('zh-CN'),
+                    likes: 0,
+                    replies: []
+                };
+                
+                // 添加到消息列表
+                forums.app.messages.unshift(newMessage);
+                
+                // 重新渲染消息
+                renderMessages('app');
+                
+                // 更新消息计数
+                updateMessageCounts();
+                
+                // 重置表单
+                appForm.reset();
+                document.getElementById('app-selected-tags').value = '';
+                document.querySelectorAll('#app-tags-container .tag.selected').forEach(tag => {
+                    tag.classList.remove('selected');
+                });
+                errorDiv.style.display = 'none';
+                
+                alert('消息发布成功！');
+            });
+            
+            // 游戏论坛表单
+            const gameForm = document.getElementById('game-message-form');
+            gameForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    alert('请先登录！');
+                    document.getElementById('login-modal').classList.add('active');
+                    return;
+                }
+                
+                const title = document.getElementById('game-title').value.trim();
+                const content = document.getElementById('game-content').value.trim();
+                const tags = document.getElementById('game-selected-tags').value.split(',').filter(tag => tag);
+                const errorDiv = document.getElementById('game-form-error');
+                
+                // 敏感词检查
+                const containsSensitiveWords = checkSensitiveWords(title + ' ' + content);
+                if (containsSensitiveWords) {
+                    errorDiv.textContent = '内容包含敏感词汇，请修改后重新提交！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                if (!title || !content) {
+                    errorDiv.textContent = '请填写所有必填字段！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 创建新消息
+                const newMessage = {
+                    id: forums.game.messages.length + 1,
+                    username: currentUser.username,
+                    title: title,
+                    content: content,
+                    tags: tags,
+                    timestamp: new Date().toLocaleString('zh-CN'),
+                    likes: 0,
+                    replies: []
+                };
+                
+                // 添加到消息列表
+                forums.game.messages.unshift(newMessage);
+                
+                // 重新渲染消息
+                renderMessages('game');
+                
+                // 更新消息计数
+                updateMessageCounts();
+                
+                // 重置表单
+                gameForm.reset();
+                document.getElementById('game-selected-tags').value = '';
+                document.querySelectorAll('#game-tags-container .tag.selected').forEach(tag => {
+                    tag.classList.remove('selected');
+                });
+                errorDiv.style.display = 'none';
+                
+                alert('消息发布成功！');
+            });
+        }
+
+        // 敏感词检查函数
+        function checkSensitiveWords(text) {
+            const lowerText = text.toLowerCase();
+            for (const word of sensitiveWords) {
+                if (lowerText.includes(word.toLowerCase())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 渲染消息列表
+        function renderMessages(forumType) {
+            const messagesList = document.getElementById(`${forumType}-messages-list`);
+            const messages = forums[forumType].messages;
+            
+            // 清空当前列表
+            messagesList.innerHTML = '';
+            
+            // 如果没有消息
+            if (messages.length === 0) {
+                messagesList.innerHTML = `
+                    <div class="login-prompt">
+                        <h3>暂无消息</h3>
+                        <p>还没有用户发表消息，成为第一个发言的人吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 渲染每条消息
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${forumType === 'game' ? 'game-message' : ''}`;
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-user">
+                            <div class="user-avatar">${getAvatarLetter(message.username)}</div>
+                            <div class="user-info">
+                                <div class="user-name">${message.username}</div>
+                                <div class="user-title">用户</div>
+                            </div>
+                        </div>
+                        <div class="message-time">${message.timestamp}</div>
+                    </div>
+                    <h3 class="message-title">${message.title}</h3>
+                    <div class="message-content">${message.content}</div>
+                    ${message.tags.length > 0 ? `
+                        <div class="message-tags">
+                            ${message.tags.map(tag => `<span class="tag ${forumType === 'game' ? 'game-tag' : ''}">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="message-footer">
+                        <div class="message-actions">
+                            <button class="message-action like-btn" data-forum="${forumType}" data-id="${message.id}">
+                                <i class="far fa-heart"></i> <span class="like-count">${message.likes}</span> 赞
+                            </button>
+                            <button class="message-action reply-btn" data-forum="${forumType}" data-id="${message.id}">
+                                <i class="far fa-comment"></i> ${message.replies.length} 回复
+                            </button>
+                        </div>
+                        ${currentUser ? `<button class="message-action reply-btn" data-forum="${forumType}" data-id="${message.id}">回复</button>` : ''}
+                    </div>
+                    <div class="reply-form" id="reply-form-${forumType}-${message.id}">
+                        <div class="form-group">
+                            <label class="form-label">回复内容</label>
+                            <textarea class="form-textarea reply-content" placeholder="请输入回复内容..." required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary cancel-reply">取消</button>
+                            <button type="button" class="btn btn-primary submit-reply" data-forum="${forumType}" data-id="${message.id}">提交回复</button>
+                        </div>
+                    </div>
+                    ${message.replies.length > 0 ? `
+                        <div class="replies-container">
+                            ${message.replies.map((reply, index) => `
+                                <div class="reply ${forumType === 'game' ? 'game-reply' : ''}">
+                                    <div class="reply-header">
+                                        <div class="reply-user">
+                                            <div class="reply-user-avatar">${getAvatarLetter(reply.username)}</div>
+                                            <span class="user-name">${reply.username}</span>
+                                        </div>
+                                        <div class="message-time">${reply.timestamp}</div>
+                                    </div>
+                                    <div class="reply-content">${reply.content}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                
+                messagesList.appendChild(messageDiv);
+            });
+            
+            // 绑定事件
+            bindMessageEvents(forumType);
+        }
+
+        // 绑定消息事件
+        function bindMessageEvents(forumType) {
+            // 点赞按钮
+            document.querySelectorAll(`.like-btn[data-forum="${forumType}"]`).forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!currentUser) {
+                        alert('请先登录！');
+                        document.getElementById('login-modal').classList.add('active');
+                        return;
+                    }
+                    
+                    const messageId = parseInt(this.getAttribute('data-id'));
+                    const message = forums[forumType].messages.find(m => m.id === messageId);
+                    
+                    if (message) {
+                        message.likes++;
+                        this.querySelector('.like-count').textContent = message.likes;
+                    }
+                });
+            });
+            
+            // 回复按钮
+            document.querySelectorAll(`.reply-btn[data-forum="${forumType}"]`).forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!currentUser) {
+                        alert('请先登录！');
+                        document.getElementById('login-modal').classList.add('active');
+                        return;
+                    }
+                    
+                    const messageId = parseInt(this.getAttribute('data-id'));
+                    const replyForm = document.getElementById(`reply-form-${forumType}-${messageId}`);
+                    
+                    // 切换显示回复表单
+                    if (replyForm.style.display === 'block') {
+                        replyForm.style.display = 'none';
+                    } else {
+                        replyForm.style.display = 'block';
+                    }
+                    
+                    // 绑定取消按钮
+                    replyForm.querySelector('.cancel-reply').addEventListener('click', () => {
+                        replyForm.style.display = 'none';
+                        replyForm.querySelector('.reply-content').value = '';
+                    });
+                    
+                    // 绑定提交按钮
+                    replyForm.querySelector('.submit-reply').addEventListener('click', function() {
+                        const content = replyForm.querySelector('.reply-content').value.trim();
+                        
+                        if (!content) {
+                            alert('请输入回复内容！');
+                            return;
+                        }
+                        
+                        // 敏感词检查
+                        if (checkSensitiveWords(content)) {
+                            alert('回复内容包含敏感词汇，请修改后重新提交！');
+                            return;
+                        }
+                        
+                        const message = forums[forumType].messages.find(m => m.id === messageId);
+                        
+                        if (message) {
+                            message.replies.push({
+                                username: currentUser.username,
+                                content: content,
+                                timestamp: new Date().toLocaleString('zh-CN')
+                            });
+                            
+                            // 重新渲染消息
+                            renderMessages(forumType);
+                            
+                            alert('回复成功！');
+                        }
+                    });
+                });
+            });
+        }
+
+        // 更新消息计数
+        function updateMessageCounts() {
+            document.getElementById('app-message-count').textContent = `${forums.app.messages.length} 条消息`;
+            document.getElementById('game-message-count').textContent = `${forums.game.messages.length} 条消息`;
+        }
+
+        // 登出功能
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                currentUser = null;
+                localStorage.removeItem('yield-orbit-current-user');
+                showLoggedOutState();
+                alert('已成功退出登录！');
+            }
+        }
+        
+        // 跳转到官网函数（备用）
+        function goToHomepage() {
+            window.open('https://yield-orbit.github.io/org/', '_blank');
+        }
+    </script>
+</body>
+</html>
