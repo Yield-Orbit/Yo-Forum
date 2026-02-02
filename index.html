@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yield Orbit 社区论坛</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💬</text></svg>">
     <style>
         * {
             margin: 0;
@@ -502,6 +503,44 @@
             margin-bottom: 30px;
         }
         
+        /* 登录方式切换 */
+        .login-method-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .login-method-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .login-method-tab:hover {
+            color: #60a5fa;
+        }
+        
+        .login-method-tab.active {
+            color: #3b82f6;
+            border-bottom: 3px solid #3b82f6;
+        }
+        
+        /* 登录表单容器 */
+        .login-form-container {
+            display: none;
+        }
+        
+        .login-form-container.active {
+            display: block;
+        }
+        
         /* 协议同意复选框 */
         .agreement-checkbox {
             margin: 20px 0;
@@ -528,6 +567,38 @@
         
         .agreement-checkbox a:hover {
             text-decoration: underline;
+        }
+        
+        /* 验证码相关样式 */
+        .captcha-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .captcha-input {
+            flex: 1;
+        }
+        
+        .send-captcha-btn {
+            padding: 12px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        
+        .send-captcha-btn:hover:not(:disabled) {
+            background: #2563eb;
+        }
+        
+        .send-captcha-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
         }
         
         /* 主标题区域 */
@@ -1058,7 +1129,7 @@
     <!-- 导航栏 -->
     <header>
         <div class="container nav-container">
-            <a href="#home" class="logo">
+            <a href="https://yield-orbit.github.io/" class="logo">
                 <div class="logo-img">YO</div>
                 <span class="logo-text">Yield Orbit</span>
             </a>
@@ -1069,7 +1140,7 @@
                         <li><a href="#home">论坛首页</a></li>
                         <li><a href="#app-forum">小程序论坛</a></li>
                         <li><a href="#game-forum">游戏论坛</a></li>
-                        <li><a href="https://yield-orbit.github.io/org/" target="_blank">官网首页</a></li>
+                        <li><a href="https://yield-orbit.github.io/" target="_blank">官网首页</a></li>
                         <li><a href="#contact">联系我们</a></li>
                     </ul>
                 </nav>
@@ -1087,7 +1158,7 @@
                 <div id="auth-buttons">
                     <button class="login-btn" id="open-login-modal">登录</button>
                     <button class="register-btn" id="open-register-modal">注册</button>
-                    <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                    <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/', '_blank')">
                         <i class="fas fa-external-link-alt"></i> 访问官网
                     </button>
                 </div>
@@ -1194,7 +1265,7 @@
                 </div>
                 
                 <div class="agreement-section">
-                    <p style="color: #60a5fa; font-weight: 600;">最后更新日期：2023年10月</p>
+                    <p style="color: #60a5fa; font-weight: 600;">最后更新日期：2026年1月</p>
                 </div>
             </div>
             <div class="agreement-actions">
@@ -1211,7 +1282,15 @@
             <h2 class="modal-title">登录账号</h2>
             <p class="modal-subtitle">登录以参与论坛讨论</p>
             
-            <form id="login-form">
+            <!-- 登录方式切换 -->
+            <div class="login-method-tabs">
+                <button class="login-method-tab active" data-method="username">用户名登录</button>
+                <button class="login-method-tab" data-method="email">QQ邮箱登录</button>
+                <button class="login-method-tab" data-method="phone">手机号登录</button>
+            </div>
+            
+            <!-- 用户名登录表单 -->
+            <form id="login-form-username" class="login-form-container active">
                 <div class="form-group">
                     <label class="form-label" for="login-username">用户名</label>
                     <input type="text" id="login-username" class="form-input" placeholder="请输入用户名" required>
@@ -1222,13 +1301,63 @@
                 </div>
                 
                 <div class="agreement-checkbox">
-                    <input type="checkbox" id="login-agreement" required>
-                    <label for="login-agreement">
-                        我已阅读并同意 <a href="javascript:void(0)" id="show-agreement-login">《Yield Orbit社区论坛用户协议》</a>
+                    <input type="checkbox" id="login-agreement-username" required>
+                    <label for="login-agreement-username">
+                        我已阅读并同意 <a href="javascript:void(0)" id="show-agreement-login-username">《Yield Orbit社区论坛用户协议》</a>
                     </label>
                 </div>
                 
-                <div id="login-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                <div id="login-error-username" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </form>
+            
+            <!-- QQ邮箱登录表单 -->
+            <form id="login-form-email" class="login-form-container">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">QQ邮箱</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="请输入QQ邮箱" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password-email">密码</label>
+                    <input type="password" id="login-password-email" class="form-input" placeholder="请输入密码" required>
+                </div>
+                
+                <div class="agreement-checkbox">
+                    <input type="checkbox" id="login-agreement-email" required>
+                    <label for="login-agreement-email">
+                        我已阅读并同意 <a href="javascript:void(0)" id="show-agreement-login-email">《Yield Orbit社区论坛用户协议》</a>
+                    </label>
+                </div>
+                
+                <div id="login-error-email" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+            </form>
+            
+            <!-- 手机号登录表单 -->
+            <form id="login-form-phone" class="login-form-container">
+                <div class="form-group">
+                    <label class="form-label" for="login-phone">手机号码</label>
+                    <input type="tel" id="login-phone" class="form-input" placeholder="请输入手机号码" required>
+                </div>
+                <div class="form-group">
+                    <div class="captcha-container">
+                        <input type="text" id="login-captcha" class="form-input captcha-input" placeholder="请输入验证码" required>
+                        <button type="button" id="send-captcha-btn" class="send-captcha-btn">发送验证码</button>
+                    </div>
+                </div>
+                
+                <div class="agreement-checkbox">
+                    <input type="checkbox" id="login-agreement-phone" required>
+                    <label for="login-agreement-phone">
+                        我已阅读并同意 <a href="javascript:void(0)" id="show-agreement-login-phone">《Yield Orbit社区论坛用户协议》</a>
+                    </label>
+                </div>
+                
+                <div id="login-error-phone" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">登录</button>
                 </div>
@@ -1248,6 +1377,16 @@
                     <label class="form-label" for="register-username">用户名</label>
                     <input type="text" id="register-username" class="form-input" placeholder="请输入用户名（3-20个字符）" required>
                     <small style="color: #94a3b8; font-size: 0.9rem;">用户名必须唯一，且不能包含特殊字符</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="register-email">QQ邮箱</label>
+                    <input type="email" id="register-email" class="form-input" placeholder="请输入QQ邮箱" required>
+                    <small style="color: #94a3b8; font-size: 0.9rem;">用于登录和找回密码</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="register-phone">手机号码（可选）</label>
+                    <input type="tel" id="register-phone" class="form-input" placeholder="请输入手机号码">
+                    <small style="color: #94a3b8; font-size: 0.9rem;">可用于手机号登录</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="register-password">密码</label>
@@ -1291,7 +1430,7 @@
             <div class="homepage-notice">
                 <h3><i class="fas fa-external-link-alt" style="color: #8b5cf6; margin-right: 10px;"></i> 访问Yield Orbit官网</h3>
                 <p>了解更多关于Yield Orbit的产品信息，包括统计类小程序和养成类游戏的详细介绍、功能说明和最新动态。</p>
-                <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')" style="margin-top: 10px;">
+                <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/', '_blank')" style="margin-top: 10px;">
                     <i class="fas fa-external-link-alt"></i> 点击访问官网
                 </button>
             </div>
@@ -1335,6 +1474,8 @@
                     <thead>
                         <tr>
                             <th>用户名</th>
+                            <th>QQ邮箱</th>
+                            <th>手机号</th>
                             <th>注册时间</th>
                             <th>状态</th>
                             <th>操作</th>
@@ -1353,6 +1494,8 @@
                     <thead>
                         <tr>
                             <th>用户名</th>
+                            <th>QQ邮箱</th>
+                            <th>手机号</th>
                             <th>封禁时间</th>
                             <th>操作</th>
                         </tr>
@@ -1405,7 +1548,7 @@
                 <div class="forum-header">
                     <h2 class="forum-title"><i class="fas fa-chart-line"></i> 小程序技术论坛</h2>
                     <div class="forum-stats">
-                        <span id="app-message-count">3 条消息</span>
+                        <span id="app-message-count">0 条消息</span>
                     </div>
                 </div>
 
@@ -1416,7 +1559,7 @@
                     <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
                         <button class="login-btn" id="app-open-login-modal">登录</button>
                         <button class="register-btn" id="app-open-register-modal">注册</button>
-                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/', '_blank')">
                             <i class="fas fa-external-link-alt"></i> 访问官网
                         </button>
                     </div>
@@ -1463,7 +1606,7 @@
                 <div class="forum-header">
                     <h2 class="forum-title"><i class="fas fa-gamepad"></i> 游戏玩家社区</h2>
                     <div class="forum-stats">
-                        <span id="game-message-count">3 条消息</span>
+                        <span id="game-message-count">0 条消息</span>
                     </div>
                 </div>
 
@@ -1474,7 +1617,7 @@
                     <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
                         <button class="login-btn" id="game-open-login-modal">登录</button>
                         <button class="register-btn" id="game-open-register-modal">注册</button>
-                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
+                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/', '_blank')">
                             <i class="fas fa-external-link-alt"></i> 访问官网
                         </button>
                     </div>
@@ -1525,6 +1668,9 @@
                 <div style="flex: 1; min-width: 250px;">
                     <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">关于论坛</h3>
                     <p style="color: #94a3b8;">Yield Orbit社区论坛是用户交流的平台，在这里可以讨论统计小程序使用技巧和游戏攻略。</p>
+                    <p style="color: #94a3b8; margin-top: 10px; font-size: 0.9rem;">
+                        <i class="fas fa-calendar-alt"></i> 建立于2026年1月30日
+                    </p>
                 </div>
                 <div style="flex: 1; min-width: 250px;">
                     <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">快速链接</h3>
@@ -1532,7 +1678,7 @@
                         <li style="margin-bottom: 10px;"><a href="#home" style="color: #94a3b8; text-decoration: none;">论坛首页</a></li>
                         <li style="margin-bottom: 10px;"><a href="#app-forum" style="color: #94a3b8; text-decoration: none;">小程序论坛</a></li>
                         <li style="margin-bottom: 10px;"><a href="#game-forum" style="color: #94a3b8; text-decoration: none;">游戏论坛</a></li>
-                        <li style="margin-bottom: 10px;"><a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #94a3b8; text-decoration: none;">官网首页</a></li>
+                        <li style="margin-bottom: 10px;"><a href="https://yield-orbit.github.io/" target="_blank" style="color: #94a3b8; text-decoration: none;">官网首页</a></li>
                     </ul>
                 </div>
                 <div style="flex: 1; min-width: 250px;">
@@ -1542,131 +1688,250 @@
                         <i class="fas fa-file-contract"></i> 查看用户协议
                     </button>
                 </div>
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">联系我们</h3>
+                    <p style="color: #94a3b8;"><i class="fas fa-envelope"></i> 2663184206@qq.com</p>
+                    <p style="color: #94a3b8; margin-top: 10px;"><i class="fas fa-globe"></i> https://yield-orbit.github.io/</p>
+                    <p style="color: #94a3b8; margin-top: 10px;"><i class="fas fa-github"></i> yield-orbit</p>
+                </div>
             </div>
             <div style="text-align: center; padding-top: 30px; border-top: 1px solid #334155; color: #94a3b8;">
-                <p>&copy; 2023 Yield Orbit. 保留所有权利。</p>
-                <p style="margin-top: 10px; font-size: 0.9rem;">社区论坛版本 1.0 | <a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #60a5fa; text-decoration: none;">前往官网</a> | <a href="javascript:void(0)" id="show-agreement-footer2" style="color: #60a5fa; text-decoration: none;">用户协议</a></p>
+                <p>&copy; 2026 Yield Orbit. 保留所有权利。</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">
+                    论坛版本 2.0 | 
+                    <a href="https://yield-orbit.github.io/" target="_blank" style="color: #60a5fa; text-decoration: none;">前往官网</a> | 
+                    <a href="javascript:void(0)" id="show-agreement-footer2" style="color: #60a5fa; text-decoration: none;">用户协议</a>
+                </p>
             </div>
         </div>
     </footer>
 
     <script>
-        // 敏感词列表（示例）
+        // 敏感词列表
         const sensitiveWords = [
-            '敏感词1', '敏感词2', '不良词汇', '违规内容',
-            '暴力', '色情', '赌博', '毒品', '反动'
+            '敏感词', '不良词汇', '违规内容', '暴力', 
+            '色情', '赌博', '毒品', '反动', '违法'
         ];
         
-        // 开发者用户名（仅yao拥有特权）
+        // 开发者用户名
         const DEVELOPER_USERNAME = 'yao';
+        const FORUM_VERSION = '2.0';
+        
+        // 数据存储键
+        const STORAGE_KEYS = {
+            USERS: 'yield_orbit_forum_users',
+            FORUMS: 'yield_orbit_forum_data',
+            CURRENT_USER: 'yield_orbit_current_user',
+            SETTINGS: 'yield_orbit_settings',
+            CAPTCHA_CODES: 'yield_orbit_captcha_codes'
+        };
+        
+        // 系统设置
+        const systemSettings = {
+            maxUsers: 1000,
+            maxMessagesPerForum: 500,
+            maxRepliesPerMessage: 100,
+            dataBackupInterval: 300000, // 5分钟
+            autoSaveInterval: 60000, // 1分钟
+            captchaExpireTime: 300000, // 验证码有效期5分钟
+            phoneLoginEnabled: true,
+            emailLoginEnabled: true
+        };
+        
+        // 验证码存储
+        let captchaCodes = new Map();
         
         // 用户数据存储
-        let users = JSON.parse(localStorage.getItem('yield-orbit-users')) || [
-            {
-                username: 'yao',
-                password: 'yao123',
-                avatarLetter: 'Y',
-                joinDate: '2023-01-01',
-                isDeveloper: true,
-                agreedToTerms: true
-            },
-            {
-                username: 'user1',
-                password: 'user123',
-                avatarLetter: 'U',
-                joinDate: '2023-10-01',
-                isDeveloper: false,
-                agreedToTerms: true
-            }
-        ];
-        
-        // 当前登录用户
-        let currentUser = JSON.parse(localStorage.getItem('yield-orbit-current-user')) || null;
-        
-        // 初始示例数据
+        let users = [];
         let forums = {
-            'app': {
-                messages: [
-                    {
-                        id: 1,
-                        username: '数据分析师',
-                        title: '如何导出统计报表？',
-                        content: '我在使用统计小程序时遇到了导出问题，总是提示格式错误。有谁知道如何正确导出Excel格式的报表吗？',
-                        tags: ['技术问题', 'bug反馈'],
-                        timestamp: '2023-10-15 14:30',
-                        likes: 8,
-                        replies: [
-                            {username: '技术支持', content: '请检查您的数据格式，确保没有特殊字符。', timestamp: '2023-10-15 15:00'},
-                            {username: '老用户', content: '可以尝试先导出为CSV格式，再转换为Excel。', timestamp: '2023-10-15 16:20'}
-                        ]
-                    },
-                    {
-                        id: 2,
-                        username: '产品经理',
-                        title: '数据可视化功能建议',
-                        content: '建议增加更多图表类型，特别是动态图表和3D图表，这样数据分析会更加直观。',
-                        tags: ['功能建议'],
-                        timestamp: '2023-10-14 09:15',
-                        likes: 15,
-                        replies: []
-                    },
-                    {
-                        id: 3,
-                        username: '新手用户',
-                        title: '入门教程推荐',
-                        content: '刚接触这个统计小程序，有没有推荐的入门教程或学习资料？谢谢大家！',
-                        tags: ['使用技巧'],
-                        timestamp: '2023-10-13 11:45',
-                        likes: 5,
-                        replies: [
-                            {username: '资深用户', content: '官方文档就是最好的入门材料，建议从基础功能开始学习。', timestamp: '2023-10-13 14:30'}
-                        ]
-                    }
-                ]
-            },
-            'game': {
-                messages: [
-                    {
-                        id: 1,
-                        username: '游戏达人',
-                        title: '快速升级攻略分享',
-                        content: '发现一个快速升级的方法：完成主线任务后，反复刷经验副本，配合双倍经验卡，一天就能满级！',
-                        tags: ['游戏攻略', '经验分享'],
-                        timestamp: '2023-10-15 16:45',
-                        likes: 23,
-                        replies: [
-                            {username: '新手玩家', content: '感谢分享！这个方法真的有效，我已经升了10级了！', timestamp: '2023-10-15 18:20'}
-                        ]
-                    },
-                    {
-                        id: 2,
-                        username: '团队领袖',
-                        title: '公会招募新成员',
-                        content: '我们公会正在招募活跃玩家，要求每周在线时间超过10小时，有意者请留言或私信我。',
-                        tags: ['组队招募'],
-                        timestamp: '2023-10-14 20:30',
-                        likes: 12,
-                        replies: []
-                    },
-                    {
-                        id: 3,
-                        username: '游戏小白',
-                        title: '卡在第三关过不去',
-                        content: '第三关的BOSS太难打了，有没有大佬能分享一下打法和装备搭配？',
-                        tags: ['问题求助'],
-                        timestamp: '2023-10-13 13:20',
-                        likes: 7,
-                        replies: [
-                            {username: '高玩', content: '建议先提升装备等级，BOSS的弱点在背后，多绕后攻击。', timestamp: '2023-10-13 15:40'},
-                            {username: '攻略作者', content: '我写了一篇详细攻略，可以参考一下：www.example.com', timestamp: '2023-10-13 17:10'}
-                        ]
-                    }
-                ]
-            }
+            'app': { messages: [] },
+            'game': { messages: [] }
         };
-
+        let currentUser = null;
+        let hasUnsavedChanges = false;
+        
+        // 改进的数据保存函数
+        function saveAllData() {
+            try {
+                // 保存用户数据
+                localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+                
+                // 保存论坛数据
+                localStorage.setItem(STORAGE_KEYS.FORUMS, JSON.stringify(forums));
+                
+                // 保存当前用户
+                if (currentUser) {
+                    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
+                }
+                
+                // 保存设置
+                localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(systemSettings));
+                
+                // 保存验证码
+                const captchaData = Array.from(captchaCodes.entries());
+                localStorage.setItem(STORAGE_KEYS.CAPTCHA_CODES, JSON.stringify(captchaData));
+                
+                console.log('数据保存成功');
+                hasUnsavedChanges = false;
+                return true;
+            } catch (error) {
+                console.error('数据保存失败:', error);
+                
+                // 如果存储空间不足，尝试清理旧数据
+                if (error.name === 'QuotaExceededError') {
+                    clearOldData();
+                    // 重试保存
+                    setTimeout(saveAllData, 100);
+                }
+                return false;
+            }
+        }
+        
+        // 清理旧数据
+        function clearOldData() {
+            try {
+                // 清理旧的论坛消息（保留最近100条）
+                ['app', 'game'].forEach(forumType => {
+                    if (forums[forumType].messages.length > 100) {
+                        forums[forumType].messages = forums[forumType].messages.slice(-100);
+                    }
+                });
+                
+                // 清理非活跃用户（超过30天未登录）
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                
+                users = users.filter(user => {
+                    if (user.username === DEVELOPER_USERNAME) return true; // 保留开发者
+                    if (user.isBanned) return true; // 保留封禁用户记录
+                    
+                    const lastLogin = user.lastLogin ? new Date(user.lastLogin) : null;
+                    if (!lastLogin) return true; // 没有登录记录的用户保留
+                    
+                    return lastLogin > thirtyDaysAgo;
+                });
+                
+                // 清理过期验证码
+                const now = Date.now();
+                for (let [key, captcha] of captchaCodes.entries()) {
+                    if (now - captcha.timestamp > systemSettings.captchaExpireTime) {
+                        captchaCodes.delete(key);
+                    }
+                }
+                
+                alert('存储空间不足，已自动清理旧数据。');
+                return true;
+            } catch (error) {
+                console.error('清理数据失败:', error);
+                return false;
+            }
+        }
+        
+        // 加载所有数据
+        function loadAllData() {
+            try {
+                // 加载用户数据
+                const usersData = localStorage.getItem(STORAGE_KEYS.USERS);
+                if (usersData) {
+                    users = JSON.parse(usersData);
+                } else {
+                    // 初始数据 - 只有开发者账户
+                    users = [
+                        {
+                            username: DEVELOPER_USERNAME,
+                            password: 'yao123456', // 默认密码
+                            email: '2663184206@qq.com',
+                            phone: null,
+                            avatarLetter: 'Y',
+                            joinDate: '2026-01-30',
+                            isDeveloper: true,
+                            agreedToTerms: true,
+                            isBanned: false,
+                            lastLogin: new Date().toISOString()
+                        }
+                    ];
+                }
+                
+                // 加载论坛数据
+                const forumsData = localStorage.getItem(STORAGE_KEYS.FORUMS);
+                if (forumsData) {
+                    const parsedData = JSON.parse(forumsData);
+                    forums.app.messages = parsedData.app?.messages || [];
+                    forums.game.messages = parsedData.game?.messages || [];
+                }
+                
+                // 加载当前用户
+                const currentUserData = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+                if (currentUserData) {
+                    currentUser = JSON.parse(currentUserData);
+                }
+                
+                // 加载设置
+                const settingsData = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+                if (settingsData) {
+                    Object.assign(systemSettings, JSON.parse(settingsData));
+                }
+                
+                // 加载验证码
+                const captchaData = localStorage.getItem(STORAGE_KEYS.CAPTCHA_CODES);
+                if (captchaData) {
+                    const captchaArray = JSON.parse(captchaData);
+                    captchaCodes = new Map(captchaArray);
+                    
+                    // 清理过期验证码
+                    const now = Date.now();
+                    for (let [key, captcha] of captchaCodes.entries()) {
+                        if (now - captcha.timestamp > systemSettings.captchaExpireTime) {
+                            captchaCodes.delete(key);
+                        }
+                    }
+                }
+                
+                console.log('数据加载成功');
+                return true;
+            } catch (error) {
+                console.error('数据加载失败:', error);
+                
+                // 如果数据损坏，重新初始化
+                if (error.name === 'SyntaxError') {
+                    alert('数据损坏，正在重新初始化...');
+                    localStorage.clear();
+                    loadAllData();
+                }
+                return false;
+            }
+        }
+        
+        // 定期自动保存
+        function setupAutoSave() {
+            // 每1分钟检查是否有未保存的更改
+            setInterval(() => {
+                if (hasUnsavedChanges) {
+                    saveAllData();
+                }
+            }, systemSettings.autoSaveInterval);
+            
+            // 每5分钟强制保存一次
+            setInterval(() => {
+                saveAllData();
+            }, systemSettings.dataBackupInterval);
+            
+            // 页面关闭前保存
+            window.addEventListener('beforeunload', function() {
+                if (hasUnsavedChanges) {
+                    saveAllData();
+                }
+            });
+        }
+        
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
+            // 加载数据
+            loadAllData();
+            
+            // 设置自动保存
+            setupAutoSave();
+            
             // 初始化用户状态
             initUserState();
             
@@ -1685,6 +1950,12 @@
             // 初始化协议相关功能
             initAgreement();
             
+            // 初始化登录方式切换
+            initLoginMethodTabs();
+            
+            // 初始化验证码功能
+            initCaptcha();
+            
             // 渲染初始消息
             renderMessages('app');
             renderMessages('game');
@@ -1695,12 +1966,156 @@
             // 更新开发者面板统计
             updateAdminStats();
         });
+        
+        // 初始化登录方式切换
+        function initLoginMethodTabs() {
+            const tabs = document.querySelectorAll('.login-method-tab');
+            const forms = document.querySelectorAll('.login-form-container');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const method = this.getAttribute('data-method');
+                    
+                    // 更新活跃选项卡
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应表单
+                    forms.forEach(form => {
+                        form.classList.remove('active');
+                        if (form.id === `login-form-${method}`) {
+                            form.classList.add('active');
+                        }
+                    });
+                    
+                    // 重置错误消息
+                    document.querySelectorAll('.sensitive-word-warning').forEach(errorDiv => {
+                        errorDiv.style.display = 'none';
+                    });
+                });
+            });
+        }
+        
+        // 初始化验证码功能
+        function initCaptcha() {
+            const sendCaptchaBtn = document.getElementById('send-captcha-btn');
+            if (sendCaptchaBtn) {
+                sendCaptchaBtn.addEventListener('click', sendCaptcha);
+            }
+        }
+        
+        // 发送验证码
+        function sendCaptcha() {
+            const phoneInput = document.getElementById('login-phone');
+            const phone = phoneInput.value.trim();
+            
+            // 验证手机号格式
+            if (!isValidPhone(phone)) {
+                alert('请输入正确的手机号码！');
+                return;
+            }
+            
+            // 检查是否已发送验证码
+            const existingCaptcha = captchaCodes.get(phone);
+            if (existingCaptcha) {
+                const now = Date.now();
+                const timeElapsed = now - existingCaptcha.timestamp;
+                
+                if (timeElapsed < 60000) { // 60秒内不能重复发送
+                    const remainingTime = Math.ceil((60000 - timeElapsed) / 1000);
+                    alert(`请等待 ${remainingTime} 秒后再发送验证码！`);
+                    return;
+                }
+            }
+            
+            // 生成验证码（6位数字）
+            const captcha = Math.floor(100000 + Math.random() * 900000).toString();
+            const timestamp = Date.now();
+            
+            // 存储验证码
+            captchaCodes.set(phone, {
+                code: captcha,
+                timestamp: timestamp
+            });
+            
+            // 保存验证码数据
+            hasUnsavedChanges = true;
+            
+            // 更新按钮状态
+            const button = document.getElementById('send-captcha-btn');
+            button.disabled = true;
+            button.textContent = '60秒后重发';
+            
+            let countdown = 60;
+            const timer = setInterval(() => {
+                countdown--;
+                button.textContent = `${countdown}秒后重发`;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    button.disabled = false;
+                    button.textContent = '发送验证码';
+                }
+            }, 1000);
+            
+            // 显示验证码（模拟发送）
+            alert(`验证码已发送到 ${phone}，验证码为：${captcha}（仅用于演示）`);
+        }
+        
+        // 验证手机号格式
+        function isValidPhone(phone) {
+            // 简单的中国手机号验证
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+        
+        // 验证QQ邮箱格式
+        function isValidQQEmail(email) {
+            const emailRegex = /^[1-9][0-9]{4,}@qq\.com$/i;
+            return emailRegex.test(email);
+        }
+        
+        // 验证验证码
+        function verifyCaptcha(phone, code) {
+            const captchaData = captchaCodes.get(phone);
+            
+            if (!captchaData) {
+                return false;
+            }
+            
+            // 检查验证码是否过期
+            const now = Date.now();
+            if (now - captchaData.timestamp > systemSettings.captchaExpireTime) {
+                captchaCodes.delete(phone);
+                return false;
+            }
+            
+            // 检查验证码是否正确
+            return captchaData.code === code;
+        }
 
         // 初始化用户状态
         function initUserState() {
             if (currentUser) {
-                // 用户已登录
-                showLoggedInState();
+                // 检查用户是否存在
+                const userExists = users.some(u => u.username === currentUser.username);
+                
+                if (userExists) {
+                    // 用户已登录且存在
+                    showLoggedInState();
+                    
+                    // 更新最后登录时间
+                    const user = users.find(u => u.username === currentUser.username);
+                    if (user) {
+                        user.lastLogin = new Date().toISOString();
+                        hasUnsavedChanges = true;
+                    }
+                } else {
+                    // 用户不存在，清除登录状态
+                    currentUser = null;
+                    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+                    showLoggedOutState();
+                }
             } else {
                 // 用户未登录
                 showLoggedOutState();
@@ -1721,7 +2136,10 @@
             const user = users.find(u => u.username === currentUser.username);
             if (user && user.isDeveloper) {
                 // 添加开发者标识
-                document.getElementById('user-info-container').innerHTML += '<div class="user-badge">开发者</div>';
+                const userInfoContainer = document.getElementById('user-info-container');
+                if (!userInfoContainer.querySelector('.user-badge')) {
+                    userInfoContainer.innerHTML += '<div class="user-badge">开发者</div>';
+                }
                 document.getElementById('current-user-avatar').classList.add('developer-avatar');
                 
                 // 显示开发者面板
@@ -1787,20 +2205,22 @@
         // 初始化协议相关功能
         function initAgreement() {
             // 显示协议链接
-            document.getElementById('show-agreement-login').addEventListener('click', () => {
-                document.getElementById('agreement-modal').classList.add('active');
-            });
+            const agreementLinks = [
+                'show-agreement-login-username',
+                'show-agreement-login-email',
+                'show-agreement-login-phone',
+                'show-agreement-register',
+                'show-agreement-footer',
+                'show-agreement-footer2'
+            ];
             
-            document.getElementById('show-agreement-register').addEventListener('click', () => {
-                document.getElementById('agreement-modal').classList.add('active');
-            });
-            
-            document.getElementById('show-agreement-footer').addEventListener('click', () => {
-                document.getElementById('agreement-modal').classList.add('active');
-            });
-            
-            document.getElementById('show-agreement-footer2').addEventListener('click', () => {
-                document.getElementById('agreement-modal').classList.add('active');
+            agreementLinks.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('click', () => {
+                        document.getElementById('agreement-modal').classList.add('active');
+                    });
+                }
             });
             
             // 协议模态框按钮
@@ -1903,7 +2323,9 @@
             
             document.getElementById('close-login-modal').addEventListener('click', () => {
                 document.getElementById('login-modal').classList.remove('active');
-                document.getElementById('login-error').style.display = 'none';
+                document.querySelectorAll('.sensitive-word-warning').forEach(errorDiv => {
+                    errorDiv.style.display = 'none';
+                });
             });
             
             // 注册模态框
@@ -1921,20 +2343,21 @@
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
                         modal.classList.remove('active');
-                        document.getElementById('login-error').style.display = 'none';
-                        document.getElementById('register-error').style.display = 'none';
+                        document.querySelectorAll('.sensitive-word-warning').forEach(errorDiv => {
+                            errorDiv.style.display = 'none';
+                        });
                     }
                 });
             });
             
-            // 登录表单提交
-            document.getElementById('login-form').addEventListener('submit', function(e) {
+            // 用户名登录表单提交
+            document.getElementById('login-form-username').addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 const username = document.getElementById('login-username').value.trim();
                 const password = document.getElementById('login-password').value.trim();
-                const agreementChecked = document.getElementById('login-agreement').checked;
-                const errorDiv = document.getElementById('login-error');
+                const agreementChecked = document.getElementById('login-agreement-username').checked;
+                const errorDiv = document.getElementById('login-error-username');
                 
                 // 检查是否同意协议
                 if (!agreementChecked) {
@@ -1944,9 +2367,165 @@
                 }
                 
                 // 验证用户
-                const user = users.find(u => u.username === username && u.password === password);
+                const user = users.find(u => u.username === username);
                 
                 if (user) {
+                    // 检查密码
+                    if (user.password === password) {
+                        // 检查是否被封禁
+                        if (user.isBanned) {
+                            errorDiv.textContent = '您的账户已被封禁，无法登录！';
+                            errorDiv.style.display = 'block';
+                            return;
+                        }
+                        
+                        // 登录成功
+                        currentUser = {
+                            username: user.username,
+                            avatarLetter: getAvatarLetter(user.username),
+                            isDeveloper: user.isDeveloper || false
+                        };
+                        
+                        // 更新最后登录时间
+                        user.lastLogin = new Date().toISOString();
+                        hasUnsavedChanges = true;
+                        
+                        // 保存到localStorage
+                        saveAllData();
+                        
+                        // 关闭模态框
+                        document.getElementById('login-modal').classList.remove('active');
+                        errorDiv.style.display = 'none';
+                        
+                        // 更新UI
+                        showLoggedInState();
+                        
+                        // 清空表单
+                        this.reset();
+                        
+                        alert('登录成功！');
+                    } else {
+                        errorDiv.textContent = '密码错误！';
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    errorDiv.textContent = '用户名不存在！';
+                    errorDiv.style.display = 'block';
+                }
+            });
+            
+            // QQ邮箱登录表单提交
+            document.getElementById('login-form-email').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-password-email').value.trim();
+                const agreementChecked = document.getElementById('login-agreement-email').checked;
+                const errorDiv = document.getElementById('login-error-email');
+                
+                // 检查是否同意协议
+                if (!agreementChecked) {
+                    errorDiv.textContent = '请阅读并同意用户协议！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 验证邮箱格式
+                if (!isValidQQEmail(email)) {
+                    errorDiv.textContent = '请输入正确的QQ邮箱格式！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 查找用户
+                const user = users.find(u => u.email === email);
+                
+                if (user) {
+                    // 检查密码
+                    if (user.password === password) {
+                        // 检查是否被封禁
+                        if (user.isBanned) {
+                            errorDiv.textContent = '您的账户已被封禁，无法登录！';
+                            errorDiv.style.display = 'block';
+                            return;
+                        }
+                        
+                        // 登录成功
+                        currentUser = {
+                            username: user.username,
+                            avatarLetter: getAvatarLetter(user.username),
+                            isDeveloper: user.isDeveloper || false
+                        };
+                        
+                        // 更新最后登录时间
+                        user.lastLogin = new Date().toISOString();
+                        hasUnsavedChanges = true;
+                        
+                        // 保存到localStorage
+                        saveAllData();
+                        
+                        // 关闭模态框
+                        document.getElementById('login-modal').classList.remove('active');
+                        errorDiv.style.display = 'none';
+                        
+                        // 更新UI
+                        showLoggedInState();
+                        
+                        // 清空表单
+                        this.reset();
+                        
+                        alert('登录成功！');
+                    } else {
+                        errorDiv.textContent = '密码错误！';
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    errorDiv.textContent = '该QQ邮箱未注册！';
+                    errorDiv.style.display = 'block';
+                }
+            });
+            
+            // 手机号登录表单提交
+            document.getElementById('login-form-phone').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const phone = document.getElementById('login-phone').value.trim();
+                const captcha = document.getElementById('login-captcha').value.trim();
+                const agreementChecked = document.getElementById('login-agreement-phone').checked;
+                const errorDiv = document.getElementById('login-error-phone');
+                
+                // 检查是否同意协议
+                if (!agreementChecked) {
+                    errorDiv.textContent = '请阅读并同意用户协议！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 验证手机号格式
+                if (!isValidPhone(phone)) {
+                    errorDiv.textContent = '请输入正确的手机号码！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 验证验证码
+                if (!verifyCaptcha(phone, captcha)) {
+                    errorDiv.textContent = '验证码错误或已过期！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 查找用户
+                const user = users.find(u => u.phone === phone);
+                
+                if (user) {
+                    // 检查是否被封禁
+                    if (user.isBanned) {
+                        errorDiv.textContent = '您的账户已被封禁，无法登录！';
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                    
                     // 登录成功
                     currentUser = {
                         username: user.username,
@@ -1954,8 +2533,15 @@
                         isDeveloper: user.isDeveloper || false
                     };
                     
+                    // 更新最后登录时间
+                    user.lastLogin = new Date().toISOString();
+                    hasUnsavedChanges = true;
+                    
+                    // 清理验证码
+                    captchaCodes.delete(phone);
+                    
                     // 保存到localStorage
-                    localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
+                    saveAllData();
                     
                     // 关闭模态框
                     document.getElementById('login-modal').classList.remove('active');
@@ -1969,8 +2555,7 @@
                     
                     alert('登录成功！');
                 } else {
-                    // 登录失败
-                    errorDiv.textContent = '用户名或密码错误！';
+                    errorDiv.textContent = '该手机号未注册！';
                     errorDiv.style.display = 'block';
                 }
             });
@@ -1980,6 +2565,8 @@
                 e.preventDefault();
                 
                 const username = document.getElementById('register-username').value.trim();
+                const email = document.getElementById('register-email').value.trim();
+                const phone = document.getElementById('register-phone').value.trim();
                 const password = document.getElementById('register-password').value.trim();
                 const passwordConfirm = document.getElementById('register-password-confirm').value.trim();
                 const agreementChecked = document.getElementById('register-agreement').checked;
@@ -2005,6 +2592,20 @@
                     return;
                 }
                 
+                // 验证邮箱格式
+                if (!isValidQQEmail(email)) {
+                    errorDiv.textContent = '请输入正确的QQ邮箱格式！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 如果有手机号，验证手机号格式
+                if (phone && !isValidPhone(phone)) {
+                    errorDiv.textContent = '请输入正确的手机号码！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
                 if (password.length < 6) {
                     errorDiv.textContent = '密码长度不能少于6位！';
                     errorDiv.style.display = 'block';
@@ -2026,9 +2627,29 @@
                     return;
                 }
                 
+                // 检查邮箱是否已注册
+                const emailExists = users.some(u => u.email === email);
+                
+                if (emailExists) {
+                    errorDiv.textContent = '该QQ邮箱已被注册！';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                
+                // 检查手机号是否已注册
+                if (phone) {
+                    const phoneExists = users.some(u => u.phone === phone);
+                    
+                    if (phoneExists) {
+                        errorDiv.textContent = '该手机号已被注册！';
+                        errorDiv.style.display = 'block';
+                        return;
+                    }
+                }
+                
                 // 检查是否尝试注册开发者账户
                 let isDeveloper = false;
-                if (username.toLowerCase() === 'yao') {
+                if (username.toLowerCase() === DEVELOPER_USERNAME.toLowerCase()) {
                     isDeveloper = true;
                     alert('注意：您正在注册开发者账户，将拥有管理权限！');
                 }
@@ -2037,18 +2658,19 @@
                 const newUser = {
                     username: username,
                     password: password,
+                    email: email,
+                    phone: phone || null,
                     avatarLetter: getAvatarLetter(username),
                     joinDate: new Date().toISOString().split('T')[0],
                     isDeveloper: isDeveloper,
                     agreedToTerms: true,
-                    isBanned: false
+                    isBanned: false,
+                    lastLogin: new Date().toISOString()
                 };
                 
                 // 添加到用户列表
                 users.push(newUser);
-                
-                // 保存到localStorage
-                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                hasUnsavedChanges = true;
                 
                 // 自动登录
                 currentUser = {
@@ -2057,7 +2679,8 @@
                     isDeveloper: newUser.isDeveloper
                 };
                 
-                localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
+                // 保存数据
+                saveAllData();
                 
                 // 关闭模态框
                 document.getElementById('register-modal').classList.remove('active');
@@ -2103,6 +2726,9 @@
             
             // 绑定封禁/解封按钮事件
             bindAdminActions();
+            
+            // 添加数据管理功能
+            addDataManagementFeatures();
         }
 
         // 加载用户表格
@@ -2113,9 +2739,21 @@
             // 过滤被封禁的用户
             const activeUsers = users.filter(user => !user.isBanned);
             
+            if (activeUsers.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            暂无活跃用户
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
             activeUsers.forEach(user => {
                 const row = document.createElement('tr');
                 const joinDate = user.joinDate || '未知';
+                const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('zh-CN') : '从未登录';
                 const isDeveloper = user.username === DEVELOPER_USERNAME || user.isDeveloper;
                 
                 row.innerHTML = `
@@ -2124,10 +2762,14 @@
                             <div class="user-avatar-small ${isDeveloper ? 'developer-avatar' : ''}">${user.avatarLetter}</div>
                             <div>
                                 <div style="font-weight: 600;">${user.username}</div>
-                                ${isDeveloper ? '<div style="font-size: 0.8rem; color: #f59e0b;">开发者</div>' : ''}
+                                <div style="font-size: 0.8rem; color: #94a3b8;">
+                                    ${isDeveloper ? '<span style="color: #f59e0b;">开发者</span>' : '普通用户'} | 最后登录: ${lastLogin}
+                                </div>
                             </div>
                         </div>
                     </td>
+                    <td>${user.email || '未设置'}</td>
+                    <td>${user.phone || '未设置'}</td>
                     <td>${joinDate}</td>
                     <td><span class="user-status status-active">活跃</span></td>
                     <td>
@@ -2150,6 +2792,17 @@
             // 过滤被封禁的用户
             const bannedUsers = users.filter(user => user.isBanned);
             
+            if (bannedUsers.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            暂无封禁用户
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
             bannedUsers.forEach(user => {
                 const row = document.createElement('tr');
                 const banDate = user.banDate || '未知';
@@ -2164,6 +2817,8 @@
                             </div>
                         </div>
                     </td>
+                    <td>${user.email || '未设置'}</td>
+                    <td>${user.phone || '未设置'}</td>
                     <td>${banDate}</td>
                     <td>
                         <div style="display: flex; gap: 8px;">
@@ -2175,6 +2830,150 @@
                 
                 tableBody.appendChild(row);
             });
+        }
+
+        // 添加数据管理功能
+        function addDataManagementFeatures() {
+            const statsContent = document.getElementById('forum-stats');
+            
+            // 添加数据管理按钮
+            const dataManagementHTML = `
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #334155;">
+                    <h4 style="margin-bottom: 15px; color: #f8fafc;">数据管理</h4>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="action-btn" id="export-data-btn" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">导出数据</button>
+                        <button class="action-btn" id="import-data-btn" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">导入数据</button>
+                        <button class="action-btn" id="clear-old-data-btn" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">清理旧数据</button>
+                        <button class="action-btn" id="delete-bots-btn" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">删除人机用户</button>
+                    </div>
+                </div>
+            `;
+            
+            statsContent.insertAdjacentHTML('beforeend', dataManagementHTML);
+            
+            // 绑定按钮事件
+            document.getElementById('export-data-btn').addEventListener('click', exportForumData);
+            document.getElementById('import-data-btn').addEventListener('click', () => {
+                // 创建文件输入
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.json';
+                fileInput.style.display = 'none';
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        importForumData(file);
+                    }
+                });
+                document.body.appendChild(fileInput);
+                fileInput.click();
+                document.body.removeChild(fileInput);
+            });
+            document.getElementById('clear-old-data-btn').addEventListener('click', clearOldDataManually);
+            document.getElementById('delete-bots-btn').addEventListener('click', deleteBotUsers);
+        }
+
+        // 导出论坛数据
+        function exportForumData() {
+            const data = {
+                version: FORUM_VERSION,
+                exportDate: new Date().toISOString(),
+                users: users,
+                forums: forums,
+                systemSettings: systemSettings
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `yield-orbit-forum-backup-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            alert('数据已导出为JSON文件！');
+        }
+
+        // 导入论坛数据
+        function importForumData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (confirm('导入数据将覆盖当前数据，确定继续吗？')) {
+                        users = importedData.users || users;
+                        forums = importedData.forums || forums;
+                        
+                        // 保存数据
+                        saveAllData();
+                        
+                        // 重新初始化界面
+                        renderMessages('app');
+                        renderMessages('game');
+                        updateAdminStats();
+                        loadUsersTable();
+                        loadBannedUsersTable();
+                        
+                        alert('数据导入成功！');
+                    }
+                } catch (error) {
+                    alert('导入失败：文件格式错误或损坏');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 手动清理旧数据
+        function clearOldDataManually() {
+            if (confirm('确定要清理30天未登录的非活跃用户和旧消息吗？')) {
+                const result = clearOldData();
+                if (result) {
+                    saveAllData();
+                    loadUsersTable();
+                    loadBannedUsersTable();
+                    updateAdminStats();
+                    alert('数据清理完成！');
+                }
+            }
+        }
+
+        // 删除人机用户
+        function deleteBotUsers() {
+            if (confirm('确定要删除所有人机用户吗？此操作不可恢复！')) {
+                // 识别并删除人机用户（示例规则：用户名包含"bot"、"test"或数字较多的用户）
+                const botPatterns = [/bot/i, /test/i, /\d{4,}/];
+                
+                const initialCount = users.length;
+                users = users.filter(user => {
+                    // 保留开发者账户
+                    if (user.username === DEVELOPER_USERNAME || user.isDeveloper) {
+                        return true;
+                    }
+                    
+                    // 检查是否匹配人机模式
+                    for (const pattern of botPatterns) {
+                        if (pattern.test(user.username)) {
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                });
+                
+                const deletedCount = initialCount - users.length;
+                
+                if (deletedCount > 0) {
+                    saveAllData();
+                    loadUsersTable();
+                    updateAdminStats();
+                    alert(`已删除 ${deletedCount} 个人机用户！`);
+                } else {
+                    alert('未找到符合条件的人机用户。');
+                }
+            }
         }
 
         // 绑定管理员操作
@@ -2216,10 +3015,11 @@
             const userIndex = users.findIndex(u => u.username === username);
             if (userIndex !== -1) {
                 users[userIndex].isBanned = true;
-                users[userIndex].banDate = new Date().toLocaleString('zh-CN');
+                users[userIndex].banDate = new Date().toISOString();
                 
-                // 保存到localStorage
-                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                // 保存数据
+                hasUnsavedChanges = true;
+                saveAllData();
                 
                 // 重新加载表格
                 loadUsersTable();
@@ -2239,8 +3039,9 @@
                 users[userIndex].isBanned = false;
                 delete users[userIndex].banDate;
                 
-                // 保存到localStorage
-                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+                // 保存数据
+                hasUnsavedChanges = true;
+                saveAllData();
                 
                 // 重新加载表格
                 loadUsersTable();
@@ -2263,8 +3064,9 @@
             // 从用户列表中删除
             users = users.filter(u => u.username !== username);
             
-            // 保存到localStorage
-            localStorage.setItem('yield-orbit-users', JSON.stringify(users));
+            // 保存数据
+            hasUnsavedChanges = true;
+            saveAllData();
             
             // 重新加载表格
             loadUsersTable();
@@ -2356,7 +3158,7 @@
                 
                 // 创建新消息
                 const newMessage = {
-                    id: forums.app.messages.length + 1,
+                    id: forums.app.messages.length > 0 ? Math.max(...forums.app.messages.map(m => m.id)) + 1 : 1,
                     username: currentUser.username,
                     title: title,
                     content: content,
@@ -2368,6 +3170,9 @@
                 
                 // 添加到消息列表
                 forums.app.messages.unshift(newMessage);
+                
+                // 标记有未保存的更改
+                hasUnsavedChanges = true;
                 
                 // 重新渲染消息
                 renderMessages('app');
@@ -2428,7 +3233,7 @@
                 
                 // 创建新消息
                 const newMessage = {
-                    id: forums.game.messages.length + 1,
+                    id: forums.game.messages.length > 0 ? Math.max(...forums.game.messages.map(m => m.id)) + 1 : 1,
                     username: currentUser.username,
                     title: title,
                     content: content,
@@ -2440,6 +3245,9 @@
                 
                 // 添加到消息列表
                 forums.game.messages.unshift(newMessage);
+                
+                // 标记有未保存的更改
+                hasUnsavedChanges = true;
                 
                 // 重新渲染消息
                 renderMessages('game');
@@ -2599,6 +3407,7 @@
                     if (message) {
                         message.likes++;
                         this.querySelector('.like-count').textContent = message.likes;
+                        hasUnsavedChanges = true;
                         updateAdminStats();
                     }
                 });
@@ -2662,6 +3471,9 @@
                                 timestamp: new Date().toLocaleString('zh-CN')
                             });
                             
+                            // 标记有未保存的更改
+                            hasUnsavedChanges = true;
+                            
                             // 重新渲染消息
                             renderMessages(forumType);
                             
@@ -2685,935 +3497,15 @@
         function logout() {
             if (confirm('确定要退出登录吗？')) {
                 currentUser = null;
-                localStorage.removeItem('yield-orbit-current-user');
+                localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
                 showLoggedOutState();
                 alert('已成功退出登录！');
             }
         }
         
-        // 跳转到官网函数（备用）
+        // 跳转到官网函数
         function goToHomepage() {
-            window.open('https://yield-orbit.github.io/org/', '_blank');
-        }
-    </script>
-</body>
-</html> 点击访问官网
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- 论坛板块选择 -->
-    <section id="forum-section">
-        <div class="container">
-            <div class="forum-tabs">
-                <div class="forum-tab active" data-forum="app-forum">
-                    <i class="fas fa-chart-line"></i> 小程序论坛
-                </div>
-                <div class="forum-tab" data-forum="game-forum">
-                    <i class="fas fa-gamepad"></i> 游戏论坛
-                </div>
-            </div>
-
-            <!-- 小程序论坛 -->
-            <div id="app-forum" class="forum-content app-forum active">
-                <div class="forum-header">
-                    <h2 class="forum-title"><i class="fas fa-chart-line"></i> 小程序技术论坛</h2>
-                    <div class="forum-stats">
-                        <span id="app-message-count">3 条消息</span>
-                    </div>
-                </div>
-
-                <!-- 登录提示 -->
-                <div id="app-login-prompt" class="login-prompt" style="display: none;">
-                    <h3>请先登录</h3>
-                    <p>登录后即可发表消息、回复和参与讨论</p>
-                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-                        <button class="login-btn" id="app-open-login-modal">登录</button>
-                        <button class="register-btn" id="app-open-register-modal">注册</button>
-                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
-                            <i class="fas fa-external-link-alt"></i> 访问官网
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 发消息表单 -->
-                <div id="app-post-form" class="post-form" style="display: none;">
-                    <h3 class="form-title">发表新消息</h3>
-                    <form id="app-message-form">
-                        <div class="form-group">
-                            <label class="form-label" for="app-title">消息标题</label>
-                            <input type="text" id="app-title" class="form-input" placeholder="请输入消息标题" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="app-content">消息内容</label>
-                            <textarea id="app-content" class="form-textarea" placeholder="请输入您要分享的内容..." required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">标签（可选）</label>
-                            <div class="message-tags" id="app-tags-container">
-                                <span class="tag" data-tag="技术问题">技术问题</span>
-                                <span class="tag" data-tag="使用技巧">使用技巧</span>
-                                <span class="tag" data-tag="功能建议">功能建议</span>
-                                <span class="tag" data-tag="bug反馈">bug反馈</span>
-                            </div>
-                            <input type="hidden" id="app-selected-tags">
-                        </div>
-                        <div id="app-form-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
-                        <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">清空</button>
-                            <button type="submit" class="btn btn-primary">发布消息</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 消息列表 -->
-                <div class="messages-container" id="app-messages-list">
-                    <!-- 消息将通过JavaScript动态添加 -->
-                </div>
-            </div>
-
-            <!-- 游戏论坛 -->
-            <div id="game-forum" class="forum-content game-forum">
-                <div class="forum-header">
-                    <h2 class="forum-title"><i class="fas fa-gamepad"></i> 游戏玩家社区</h2>
-                    <div class="forum-stats">
-                        <span id="game-message-count">3 条消息</span>
-                    </div>
-                </div>
-
-                <!-- 登录提示 -->
-                <div id="game-login-prompt" class="login-prompt" style="display: none;">
-                    <h3>请先登录</h3>
-                    <p>登录后即可发表消息、回复和参与讨论</p>
-                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-                        <button class="login-btn" id="game-open-login-modal">登录</button>
-                        <button class="register-btn" id="game-open-register-modal">注册</button>
-                        <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
-                            <i class="fas fa-external-link-alt"></i> 访问官网
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 发消息表单 -->
-                <div id="game-post-form" class="post-form" style="display: none;">
-                    <h3 class="form-title">发表新消息</h3>
-                    <form id="game-message-form">
-                        <div class="form-group">
-                            <label class="form-label" for="game-title">消息标题</label>
-                            <input type="text" id="game-title" class="form-input" placeholder="请输入消息标题" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="game-content">消息内容</label>
-                            <textarea id="game-content" class="form-textarea" placeholder="请输入您要分享的内容..." required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">标签（可选）</label>
-                            <div class="message-tags" id="game-tags-container">
-                                <span class="tag game-tag" data-tag="游戏攻略">游戏攻略</span>
-                                <span class="tag game-tag" data-tag="组队招募">组队招募</span>
-                                <span class="tag game-tag" data-tag="问题求助">问题求助</span>
-                                <span class="tag game-tag" data-tag="经验分享">经验分享</span>
-                            </div>
-                            <input type="hidden" id="game-selected-tags">
-                        </div>
-                        <div id="game-form-error" class="sensitive-word-warning" style="display: none; margin-bottom: 20px;"></div>
-                        <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">清空</button>
-                            <button type="submit" class="btn btn-primary">发布消息</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 消息列表 -->
-                <div class="messages-container" id="game-messages-list">
-                    <!-- 消息将通过JavaScript动态添加 -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer id="contact" style="background-color: rgba(15, 23, 42, 0.98); padding: 60px 0 30px; margin-top: 60px; border-top: 1px solid #334155;">
-        <div class="container">
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; margin-bottom: 40px;">
-                <div style="flex: 1; min-width: 250px;">
-                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">关于论坛</h3>
-                    <p style="color: #94a3b8;">Yield Orbit社区论坛是用户交流的平台，在这里可以讨论统计小程序使用技巧和游戏攻略。</p>
-                </div>
-                <div style="flex: 1; min-width: 250px;">
-                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">快速链接</h3>
-                    <ul style="list-style: none; color: #94a3b8;">
-                        <li style="margin-bottom: 10px;"><a href="#home" style="color: #94a3b8; text-decoration: none;">论坛首页</a></li>
-                        <li style="margin-bottom: 10px;"><a href="#app-forum" style="color: #94a3b8; text-decoration: none;">小程序论坛</a></li>
-                        <li style="margin-bottom: 10px;"><a href="#game-forum" style="color: #94a3b8; text-decoration: none;">游戏论坛</a></li>
-                        <li style="margin-bottom: 10px;"><a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #94a3b8; text-decoration: none;">官网首页</a></li>
-                    </ul>
-                </div>
-                <div style="flex: 1; min-width: 250px;">
-                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: #60a5fa;">官方网站</h3>
-                    <p style="color: #94a3b8; margin-bottom: 20px;">访问Yield Orbit官网了解更多产品信息：</p>
-                    <button class="homepage-btn" onclick="window.open('https://yield-orbit.github.io/org/', '_blank')">
-                        <i class="fas fa-external-link-alt"></i> 访问官网
-                    </button>
-                </div>
-            </div>
-            <div style="text-align: center; padding-top: 30px; border-top: 1px solid #334155; color: #94a3b8;">
-                <p>&copy; 2023 Yield Orbit. 保留所有权利。</p>
-                <p style="margin-top: 10px; font-size: 0.9rem;">社区论坛版本 1.0 | <a href="https://yield-orbit.github.io/org/" target="_blank" style="color: #60a5fa; text-decoration: none;">前往官网</a></p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // 敏感词列表（示例）
-        const sensitiveWords = [
-            '敏感词1', '敏感词2', '不良词汇', '违规内容',
-            '暴力', '色情', '赌博', '毒品', '反动'
-        ];
-        
-        // 用户数据存储
-        let users = JSON.parse(localStorage.getItem('yield-orbit-users')) || [
-            {
-                username: 'admin',
-                password: 'admin123',
-                avatarLetter: 'A',
-                joinDate: '2023-01-01'
-            },
-            {
-                username: 'user1',
-                password: 'user123',
-                avatarLetter: 'U',
-                joinDate: '2023-10-01'
-            }
-        ];
-        
-        // 当前登录用户
-        let currentUser = JSON.parse(localStorage.getItem('yield-orbit-current-user')) || null;
-        
-        // 初始示例数据
-        let forums = {
-            'app': {
-                messages: [
-                    {
-                        id: 1,
-                        username: '数据分析师',
-                        title: '如何导出统计报表？',
-                        content: '我在使用统计小程序时遇到了导出问题，总是提示格式错误。有谁知道如何正确导出Excel格式的报表吗？',
-                        tags: ['技术问题', 'bug反馈'],
-                        timestamp: '2023-10-15 14:30',
-                        likes: 8,
-                        replies: [
-                            {username: '技术支持', content: '请检查您的数据格式，确保没有特殊字符。', timestamp: '2023-10-15 15:00'},
-                            {username: '老用户', content: '可以尝试先导出为CSV格式，再转换为Excel。', timestamp: '2023-10-15 16:20'}
-                        ]
-                    },
-                    {
-                        id: 2,
-                        username: '产品经理',
-                        title: '数据可视化功能建议',
-                        content: '建议增加更多图表类型，特别是动态图表和3D图表，这样数据分析会更加直观。',
-                        tags: ['功能建议'],
-                        timestamp: '2023-10-14 09:15',
-                        likes: 15,
-                        replies: []
-                    },
-                    {
-                        id: 3,
-                        username: '新手用户',
-                        title: '入门教程推荐',
-                        content: '刚接触这个统计小程序，有没有推荐的入门教程或学习资料？谢谢大家！',
-                        tags: ['使用技巧'],
-                        timestamp: '2023-10-13 11:45',
-                        likes: 5,
-                        replies: [
-                            {username: '资深用户', content: '官方文档就是最好的入门材料，建议从基础功能开始学习。', timestamp: '2023-10-13 14:30'}
-                        ]
-                    }
-                ]
-            },
-            'game': {
-                messages: [
-                    {
-                        id: 1,
-                        username: '游戏达人',
-                        title: '快速升级攻略分享',
-                        content: '发现一个快速升级的方法：完成主线任务后，反复刷经验副本，配合双倍经验卡，一天就能满级！',
-                        tags: ['游戏攻略', '经验分享'],
-                        timestamp: '2023-10-15 16:45',
-                        likes: 23,
-                        replies: [
-                            {username: '新手玩家', content: '感谢分享！这个方法真的有效，我已经升了10级了！', timestamp: '2023-10-15 18:20'}
-                        ]
-                    },
-                    {
-                        id: 2,
-                        username: '团队领袖',
-                        title: '公会招募新成员',
-                        content: '我们公会正在招募活跃玩家，要求每周在线时间超过10小时，有意者请留言或私信我。',
-                        tags: ['组队招募'],
-                        timestamp: '2023-10-14 20:30',
-                        likes: 12,
-                        replies: []
-                    },
-                    {
-                        id: 3,
-                        username: '游戏小白',
-                        title: '卡在第三关过不去',
-                        content: '第三关的BOSS太难打了，有没有大佬能分享一下打法和装备搭配？',
-                        tags: ['问题求助'],
-                        timestamp: '2023-10-13 13:20',
-                        likes: 7,
-                        replies: [
-                            {username: '高玩', content: '建议先提升装备等级，BOSS的弱点在背后，多绕后攻击。', timestamp: '2023-10-13 15:40'},
-                            {username: '攻略作者', content: '我写了一篇详细攻略，可以参考一下：www.example.com', timestamp: '2023-10-13 17:10'}
-                        ]
-                    }
-                ]
-            }
-        };
-
-        // 初始化页面
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化用户状态
-            initUserState();
-            
-            // 初始化论坛切换
-            initForumTabs();
-            
-            // 初始化标签选择
-            initTagSelection();
-            
-            // 初始化表单提交
-            initFormSubmit();
-            
-            // 初始化模态框
-            initModals();
-            
-            // 渲染初始消息
-            renderMessages('app');
-            renderMessages('game');
-            
-            // 更新消息计数
-            updateMessageCounts();
-        });
-
-        // 初始化用户状态
-        function initUserState() {
-            if (currentUser) {
-                // 用户已登录
-                showLoggedInState();
-            } else {
-                // 用户未登录
-                showLoggedOutState();
-            }
-        }
-
-        // 显示登录状态
-        function showLoggedInState() {
-            // 更新导航栏
-            document.getElementById('auth-buttons').style.display = 'none';
-            document.getElementById('user-info-display').style.display = 'flex';
-            document.getElementById('current-username').textContent = currentUser.username;
-            document.getElementById('current-user-avatar').textContent = getAvatarLetter(currentUser.username);
-            document.getElementById('welcome-username').textContent = currentUser.username;
-            document.getElementById('user-welcome').style.display = 'block';
-            
-            // 显示发帖表单
-            document.getElementById('app-post-form').style.display = 'block';
-            document.getElementById('game-post-form').style.display = 'block';
-            
-            // 隐藏登录提示
-            document.getElementById('app-login-prompt').style.display = 'none';
-            document.getElementById('game-login-prompt').style.display = 'none';
-            
-            // 绑定登出按钮
-            document.getElementById('logout-btn').addEventListener('click', logout);
-        }
-
-        // 显示登出状态
-        function showLoggedOutState() {
-            // 更新导航栏
-            document.getElementById('auth-buttons').style.display = 'flex';
-            document.getElementById('user-info-display').style.display = 'none';
-            document.getElementById('user-welcome').style.display = 'none';
-            
-            // 隐藏发帖表单
-            document.getElementById('app-post-form').style.display = 'none';
-            document.getElementById('game-post-form').style.display = 'none';
-            
-            // 显示登录提示
-            document.getElementById('app-login-prompt').style.display = 'block';
-            document.getElementById('game-login-prompt').style.display = 'block';
-            
-            // 绑定登录提示按钮
-            document.getElementById('app-open-login-modal').addEventListener('click', () => {
-                document.getElementById('login-modal').classList.add('active');
-            });
-            document.getElementById('app-open-register-modal').addEventListener('click', () => {
-                document.getElementById('register-modal').classList.add('active');
-            });
-            document.getElementById('game-open-login-modal').addEventListener('click', () => {
-                document.getElementById('login-modal').classList.add('active');
-            });
-            document.getElementById('game-open-register-modal').addEventListener('click', () => {
-                document.getElementById('register-modal').classList.add('active');
-            });
-        }
-
-        // 获取用户头像首字母
-        function getAvatarLetter(username) {
-            return username.charAt(0).toUpperCase();
-        }
-
-        // 论坛选项卡切换
-        function initForumTabs() {
-            const tabs = document.querySelectorAll('.forum-tab');
-            const forums = document.querySelectorAll('.forum-content');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const forumId = this.getAttribute('data-forum');
-                    
-                    // 更新活跃选项卡
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // 显示对应论坛
-                    forums.forEach(forum => {
-                        forum.classList.remove('active');
-                        if (forum.id === forumId) {
-                            forum.classList.add('active');
-                        }
-                    });
-                });
-            });
-        }
-
-        // 标签选择功能
-        function initTagSelection() {
-            // 小程序论坛标签
-            const appTags = document.querySelectorAll('#app-tags-container .tag');
-            const appSelectedTagsInput = document.getElementById('app-selected-tags');
-            let appSelectedTags = [];
-            
-            appTags.forEach(tag => {
-                tag.addEventListener('click', function() {
-                    const tagText = this.getAttribute('data-tag');
-                    
-                    if (this.classList.contains('selected')) {
-                        // 取消选择
-                        this.classList.remove('selected');
-                        appSelectedTags = appSelectedTags.filter(t => t !== tagText);
-                    } else {
-                        // 选择标签
-                        this.classList.add('selected');
-                        appSelectedTags.push(tagText);
-                    }
-                    
-                    appSelectedTagsInput.value = appSelectedTags.join(',');
-                });
-            });
-            
-            // 游戏论坛标签
-            const gameTags = document.querySelectorAll('#game-tags-container .tag');
-            const gameSelectedTagsInput = document.getElementById('game-selected-tags');
-            let gameSelectedTags = [];
-            
-            gameTags.forEach(tag => {
-                tag.addEventListener('click', function() {
-                    const tagText = this.getAttribute('data-tag');
-                    
-                    if (this.classList.contains('selected')) {
-                        // 取消选择
-                        this.classList.remove('selected');
-                        gameSelectedTags = gameSelectedTags.filter(t => t !== tagText);
-                    } else {
-                        // 选择标签
-                        this.classList.add('selected');
-                        gameSelectedTags.push(tagText);
-                    }
-                    
-                    gameSelectedTagsInput.value = gameSelectedTags.join(',');
-                });
-            });
-        }
-
-        // 初始化模态框
-        function initModals() {
-            // 登录模态框
-            document.getElementById('open-login-modal').addEventListener('click', () => {
-                document.getElementById('login-modal').classList.add('active');
-            });
-            
-            document.getElementById('close-login-modal').addEventListener('click', () => {
-                document.getElementById('login-modal').classList.remove('active');
-                document.getElementById('login-error').style.display = 'none';
-            });
-            
-            // 注册模态框
-            document.getElementById('open-register-modal').addEventListener('click', () => {
-                document.getElementById('register-modal').classList.add('active');
-            });
-            
-            document.getElementById('close-register-modal').addEventListener('click', () => {
-                document.getElementById('register-modal').classList.remove('active');
-                document.getElementById('register-error').style.display = 'none';
-            });
-            
-            // 点击模态框背景关闭
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.classList.remove('active');
-                        document.getElementById('login-error').style.display = 'none';
-                        document.getElementById('register-error').style.display = 'none';
-                    }
-                });
-            });
-            
-            // 登录表单提交
-            document.getElementById('login-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const username = document.getElementById('login-username').value.trim();
-                const password = document.getElementById('login-password').value.trim();
-                const errorDiv = document.getElementById('login-error');
-                
-                // 验证用户
-                const user = users.find(u => u.username === username && u.password === password);
-                
-                if (user) {
-                    // 登录成功
-                    currentUser = {
-                        username: user.username,
-                        avatarLetter: getAvatarLetter(user.username)
-                    };
-                    
-                    // 保存到localStorage
-                    localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
-                    
-                    // 关闭模态框
-                    document.getElementById('login-modal').classList.remove('active');
-                    errorDiv.style.display = 'none';
-                    
-                    // 更新UI
-                    showLoggedInState();
-                    
-                    // 清空表单
-                    this.reset();
-                    
-                    alert('登录成功！');
-                } else {
-                    // 登录失败
-                    errorDiv.textContent = '用户名或密码错误！';
-                    errorDiv.style.display = 'block';
-                }
-            });
-            
-            // 注册表单提交
-            document.getElementById('register-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const username = document.getElementById('register-username').value.trim();
-                const password = document.getElementById('register-password').value.trim();
-                const passwordConfirm = document.getElementById('register-password-confirm').value.trim();
-                const errorDiv = document.getElementById('register-error');
-                
-                // 验证输入
-                if (username.length < 3 || username.length > 20) {
-                    errorDiv.textContent = '用户名长度必须在3-20个字符之间！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-                    errorDiv.textContent = '用户名只能包含字母、数字和下划线！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    errorDiv.textContent = '密码长度不能少于6位！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                if (password !== passwordConfirm) {
-                    errorDiv.textContent = '两次输入的密码不一致！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                // 检查用户名是否已存在
-                const userExists = users.some(u => u.username === username);
-                
-                if (userExists) {
-                    errorDiv.textContent = '用户名已存在，请选择其他用户名！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                // 创建新用户
-                const newUser = {
-                    username: username,
-                    password: password,
-                    avatarLetter: getAvatarLetter(username),
-                    joinDate: new Date().toISOString().split('T')[0]
-                };
-                
-                // 添加到用户列表
-                users.push(newUser);
-                
-                // 保存到localStorage
-                localStorage.setItem('yield-orbit-users', JSON.stringify(users));
-                
-                // 自动登录
-                currentUser = {
-                    username: newUser.username,
-                    avatarLetter: newUser.avatarLetter
-                };
-                
-                localStorage.setItem('yield-orbit-current-user', JSON.stringify(currentUser));
-                
-                // 关闭模态框
-                document.getElementById('register-modal').classList.remove('active');
-                errorDiv.style.display = 'none';
-                
-                // 更新UI
-                showLoggedInState();
-                
-                // 清空表单
-                this.reset();
-                
-                alert('注册成功！已自动登录。');
-            });
-        }
-
-        // 表单提交功能
-        function initFormSubmit() {
-            // 小程序论坛表单
-            const appForm = document.getElementById('app-message-form');
-            appForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (!currentUser) {
-                    alert('请先登录！');
-                    document.getElementById('login-modal').classList.add('active');
-                    return;
-                }
-                
-                const title = document.getElementById('app-title').value.trim();
-                const content = document.getElementById('app-content').value.trim();
-                const tags = document.getElementById('app-selected-tags').value.split(',').filter(tag => tag);
-                const errorDiv = document.getElementById('app-form-error');
-                
-                // 敏感词检查
-                const containsSensitiveWords = checkSensitiveWords(title + ' ' + content);
-                if (containsSensitiveWords) {
-                    errorDiv.textContent = '内容包含敏感词汇，请修改后重新提交！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                if (!title || !content) {
-                    errorDiv.textContent = '请填写所有必填字段！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                // 创建新消息
-                const newMessage = {
-                    id: forums.app.messages.length + 1,
-                    username: currentUser.username,
-                    title: title,
-                    content: content,
-                    tags: tags,
-                    timestamp: new Date().toLocaleString('zh-CN'),
-                    likes: 0,
-                    replies: []
-                };
-                
-                // 添加到消息列表
-                forums.app.messages.unshift(newMessage);
-                
-                // 重新渲染消息
-                renderMessages('app');
-                
-                // 更新消息计数
-                updateMessageCounts();
-                
-                // 重置表单
-                appForm.reset();
-                document.getElementById('app-selected-tags').value = '';
-                document.querySelectorAll('#app-tags-container .tag.selected').forEach(tag => {
-                    tag.classList.remove('selected');
-                });
-                errorDiv.style.display = 'none';
-                
-                alert('消息发布成功！');
-            });
-            
-            // 游戏论坛表单
-            const gameForm = document.getElementById('game-message-form');
-            gameForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (!currentUser) {
-                    alert('请先登录！');
-                    document.getElementById('login-modal').classList.add('active');
-                    return;
-                }
-                
-                const title = document.getElementById('game-title').value.trim();
-                const content = document.getElementById('game-content').value.trim();
-                const tags = document.getElementById('game-selected-tags').value.split(',').filter(tag => tag);
-                const errorDiv = document.getElementById('game-form-error');
-                
-                // 敏感词检查
-                const containsSensitiveWords = checkSensitiveWords(title + ' ' + content);
-                if (containsSensitiveWords) {
-                    errorDiv.textContent = '内容包含敏感词汇，请修改后重新提交！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                if (!title || !content) {
-                    errorDiv.textContent = '请填写所有必填字段！';
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-                
-                // 创建新消息
-                const newMessage = {
-                    id: forums.game.messages.length + 1,
-                    username: currentUser.username,
-                    title: title,
-                    content: content,
-                    tags: tags,
-                    timestamp: new Date().toLocaleString('zh-CN'),
-                    likes: 0,
-                    replies: []
-                };
-                
-                // 添加到消息列表
-                forums.game.messages.unshift(newMessage);
-                
-                // 重新渲染消息
-                renderMessages('game');
-                
-                // 更新消息计数
-                updateMessageCounts();
-                
-                // 重置表单
-                gameForm.reset();
-                document.getElementById('game-selected-tags').value = '';
-                document.querySelectorAll('#game-tags-container .tag.selected').forEach(tag => {
-                    tag.classList.remove('selected');
-                });
-                errorDiv.style.display = 'none';
-                
-                alert('消息发布成功！');
-            });
-        }
-
-        // 敏感词检查函数
-        function checkSensitiveWords(text) {
-            const lowerText = text.toLowerCase();
-            for (const word of sensitiveWords) {
-                if (lowerText.includes(word.toLowerCase())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        // 渲染消息列表
-        function renderMessages(forumType) {
-            const messagesList = document.getElementById(`${forumType}-messages-list`);
-            const messages = forums[forumType].messages;
-            
-            // 清空当前列表
-            messagesList.innerHTML = '';
-            
-            // 如果没有消息
-            if (messages.length === 0) {
-                messagesList.innerHTML = `
-                    <div class="login-prompt">
-                        <h3>暂无消息</h3>
-                        <p>还没有用户发表消息，成为第一个发言的人吧！</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // 渲染每条消息
-            messages.forEach(message => {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${forumType === 'game' ? 'game-message' : ''}`;
-                messageDiv.innerHTML = `
-                    <div class="message-header">
-                        <div class="message-user">
-                            <div class="user-avatar">${getAvatarLetter(message.username)}</div>
-                            <div class="user-info">
-                                <div class="user-name">${message.username}</div>
-                                <div class="user-title">用户</div>
-                            </div>
-                        </div>
-                        <div class="message-time">${message.timestamp}</div>
-                    </div>
-                    <h3 class="message-title">${message.title}</h3>
-                    <div class="message-content">${message.content}</div>
-                    ${message.tags.length > 0 ? `
-                        <div class="message-tags">
-                            ${message.tags.map(tag => `<span class="tag ${forumType === 'game' ? 'game-tag' : ''}">${tag}</span>`).join('')}
-                        </div>
-                    ` : ''}
-                    <div class="message-footer">
-                        <div class="message-actions">
-                            <button class="message-action like-btn" data-forum="${forumType}" data-id="${message.id}">
-                                <i class="far fa-heart"></i> <span class="like-count">${message.likes}</span> 赞
-                            </button>
-                            <button class="message-action reply-btn" data-forum="${forumType}" data-id="${message.id}">
-                                <i class="far fa-comment"></i> ${message.replies.length} 回复
-                            </button>
-                        </div>
-                        ${currentUser ? `<button class="message-action reply-btn" data-forum="${forumType}" data-id="${message.id}">回复</button>` : ''}
-                    </div>
-                    <div class="reply-form" id="reply-form-${forumType}-${message.id}">
-                        <div class="form-group">
-                            <label class="form-label">回复内容</label>
-                            <textarea class="form-textarea reply-content" placeholder="请输入回复内容..." required></textarea>
-                        </div>
-                        <div class="form-actions">
-                            <button type="button" class="btn btn-secondary cancel-reply">取消</button>
-                            <button type="button" class="btn btn-primary submit-reply" data-forum="${forumType}" data-id="${message.id}">提交回复</button>
-                        </div>
-                    </div>
-                    ${message.replies.length > 0 ? `
-                        <div class="replies-container">
-                            ${message.replies.map((reply, index) => `
-                                <div class="reply ${forumType === 'game' ? 'game-reply' : ''}">
-                                    <div class="reply-header">
-                                        <div class="reply-user">
-                                            <div class="reply-user-avatar">${getAvatarLetter(reply.username)}</div>
-                                            <span class="user-name">${reply.username}</span>
-                                        </div>
-                                        <div class="message-time">${reply.timestamp}</div>
-                                    </div>
-                                    <div class="reply-content">${reply.content}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                `;
-                
-                messagesList.appendChild(messageDiv);
-            });
-            
-            // 绑定事件
-            bindMessageEvents(forumType);
-        }
-
-        // 绑定消息事件
-        function bindMessageEvents(forumType) {
-            // 点赞按钮
-            document.querySelectorAll(`.like-btn[data-forum="${forumType}"]`).forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (!currentUser) {
-                        alert('请先登录！');
-                        document.getElementById('login-modal').classList.add('active');
-                        return;
-                    }
-                    
-                    const messageId = parseInt(this.getAttribute('data-id'));
-                    const message = forums[forumType].messages.find(m => m.id === messageId);
-                    
-                    if (message) {
-                        message.likes++;
-                        this.querySelector('.like-count').textContent = message.likes;
-                    }
-                });
-            });
-            
-            // 回复按钮
-            document.querySelectorAll(`.reply-btn[data-forum="${forumType}"]`).forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (!currentUser) {
-                        alert('请先登录！');
-                        document.getElementById('login-modal').classList.add('active');
-                        return;
-                    }
-                    
-                    const messageId = parseInt(this.getAttribute('data-id'));
-                    const replyForm = document.getElementById(`reply-form-${forumType}-${messageId}`);
-                    
-                    // 切换显示回复表单
-                    if (replyForm.style.display === 'block') {
-                        replyForm.style.display = 'none';
-                    } else {
-                        replyForm.style.display = 'block';
-                    }
-                    
-                    // 绑定取消按钮
-                    replyForm.querySelector('.cancel-reply').addEventListener('click', () => {
-                        replyForm.style.display = 'none';
-                        replyForm.querySelector('.reply-content').value = '';
-                    });
-                    
-                    // 绑定提交按钮
-                    replyForm.querySelector('.submit-reply').addEventListener('click', function() {
-                        const content = replyForm.querySelector('.reply-content').value.trim();
-                        
-                        if (!content) {
-                            alert('请输入回复内容！');
-                            return;
-                        }
-                        
-                        // 敏感词检查
-                        if (checkSensitiveWords(content)) {
-                            alert('回复内容包含敏感词汇，请修改后重新提交！');
-                            return;
-                        }
-                        
-                        const message = forums[forumType].messages.find(m => m.id === messageId);
-                        
-                        if (message) {
-                            message.replies.push({
-                                username: currentUser.username,
-                                content: content,
-                                timestamp: new Date().toLocaleString('zh-CN')
-                            });
-                            
-                            // 重新渲染消息
-                            renderMessages(forumType);
-                            
-                            alert('回复成功！');
-                        }
-                    });
-                });
-            });
-        }
-
-        // 更新消息计数
-        function updateMessageCounts() {
-            document.getElementById('app-message-count').textContent = `${forums.app.messages.length} 条消息`;
-            document.getElementById('game-message-count').textContent = `${forums.game.messages.length} 条消息`;
-        }
-
-        // 登出功能
-        function logout() {
-            if (confirm('确定要退出登录吗？')) {
-                currentUser = null;
-                localStorage.removeItem('yield-orbit-current-user');
-                showLoggedOutState();
-                alert('已成功退出登录！');
-            }
-        }
-        
-        // 跳转到官网函数（备用）
-        function goToHomepage() {
-            window.open('https://yield-orbit.github.io/org/', '_blank');
+            window.open('https://yield-orbit.github.io/', '_blank');
         }
     </script>
 </body>
